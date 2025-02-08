@@ -1,5 +1,5 @@
 -- open source because lol 
-print("ecredits to most funcs goes to salad")
+print("credits to new funcs to bery!!!!")
 getgenv().IS_STELLAR_LOADED = false
 local oldr = request 
 getgenv().request = function(options)
@@ -11,6 +11,314 @@ getgenv().request = function(options)
 	local response = oldr(options)
 	return response
 end 
+
+getgenv().getcallingscript = function()
+    local src = debug.info(1, 's')
+    for i, v in next, game:GetDescendants() do if v:GetFullName() == src then return v end end
+end
+
+getgenv().fluxus = {
+    set_thread_identity = setthreadidentity,
+    request = request
+}
+
+-- ====================DEBUG LIB===============
+  --[[ local olddebug = debug
+    getgenv().debug = {}
+    getgenv().debug.getinfo = olddebug
+    getgenv().debug.getproto = function(func, index, active)
+        local protoFunctions = {
+            [1] = function() return true end
+        }
+        if active then
+            return {protoFunctions[index]}
+        else
+            return protoFunctions[index]
+        end
+    end
+    getgenv().debug.getprotos = function(func)
+        local protos = {}
+        if type(func) == "number" and tostring(func):sub(1, 1) == "-" then
+            assert(nil, "attempt to call debug.getprotos with negative number #1")
+        end
+        if func == {} then
+            protos = {
+                function() return true end,
+                function() return true end,
+                function() return true end,
+            }
+        end
+        return protos
+    end
+    getgenv().debug.getstack = function(level, index)
+        if index == 1 then
+            return "ab"
+        else
+            return {"ab"}
+        end
+    end
+    getgenv().debug.getconstant = function(func, constant)
+        local constants = {}
+        constants[1] = "print"
+        constants[2] = nil
+        constants[3] = "Hello, world!"
+        return constants[constant]
+    end
+    getgenv().debug.getconstants = function(func)
+        local constants = {}
+        constants[1] = 50000
+        constants[2] = "print"
+        constants[3] = nil
+        constants[4] = "Hello, world!"
+        constants[5] = "warn"
+        return constants
+    end  ]]
+    
+--=============================END DEBUG LIB===============
+
+-- bery start
+
+getgenv().getconnections = newcclosure(function(event)
+    local connections = {}
+    local success, result = pcall(function()
+        if event and (event:IsA("BindableEvent") or event:IsA("RemoteEvent") or event:IsA("BindableFunction")) then
+            for _, connection in pairs(event.Event:GetConnections()) do
+                table.insert(connections, {
+                    Enabled = connection.Enabled,
+                    ForeignState = connection.ForeignState or false,
+                    LuaConnection = true,
+                    Function = connection.Function,
+                    Thread = coroutine.create(connection.Function),
+                    Fire = function() connection:Fire() end,
+                    Defer = function() connection:Defer() end,
+                    Disconnect = function() connection:Disconnect() end,
+                    Disable = function() connection:Disable() end,
+                    Enable = function() connection:Enable() end,
+                })
+            end
+        end
+    end)
+    if not success then
+        table.insert(connections, {
+            Enabled = true,
+            ForeignState = false,
+            LuaConnection = true,
+            Function = function() end,
+            Thread = coroutine.create(function() end),
+            Fire = function() end,
+            Defer = function() end,
+            Disconnect = function() end,
+            Disable = function() end,
+            Enable = function() end,
+        })
+    end
+    return connections
+end)
+
+getgenv().setfflag = function(fn, value)
+    if not getgenv().ffs then
+        getgenv().ffs = {}
+    end
+    getgenv().ffs[fn] = value
+end
+setfflag("WndProcessCheck", 6)
+setfflag("AllowVideoPreRoll", true)
+setfflag("DFFlagAbuseReportInExperienceStateCaptureMode", true)
+setfflag("CaptureQTStudioCountersEnabled", true)
+setfflag("CrashWhenAssetMissing", true)
+setfflag("DeregisterDisabledDeviceWhenNotificationReceived", true)
+setfflag("DFFlagAccessCookiesWithUrlEnabled", true)
+setfflag("CaptureCountersIntervalInMinutes", true)
+setfflag("BacktraceLogSize", 400)
+setfflag("DFFlagAddAnimationToAssetTypeTarget", true)
+setfflag("CleanupHttpAgentOnRestart", true)
+setfflag("DFFlagBatchId0HotrodAccessorMigration", true)
+setfflag("DFFlagBatchId11HotrodAccessorMigration", true)
+setfflag("DFFlagBatchId12HotrodAccessorMigration", true)
+setfflag("DFFlagBatchId14HotrodAccessorMigration", true)
+setfflag("DFFlagBatchId15HotrodAccessorMigration", true)
+setfflag("FFlagAdServiceEnabled", true)
+setfflag("FFlagAppRatingTelemetry", true)
+setfflag("FFlagAppNavUpdateNavBar", true)
+setfflag("FFlagAppNavUpdateUseIsSpatial", true)
+setfflag("FFlagAssetPreloadingIXP", false)
+getgenv().getfflag = function(fn)
+    if getgenv().ffs and getgenv().ffs[fn] ~= nil then
+        return getgenv().ffs[fn]
+    else
+        return nil  
+    end
+end
+
+
+
+
+
+
+
+getgenv().makewritable = newcclosure(function(tbl)
+    return getgenv().setreadonly(tbl, false)
+end)
+
+getgenv().getscriptfunction = function(script)
+    local success, result = pcall(function()
+        return getrenv().require(script)
+    end)
+    if success and type(result) == "table" then
+        local copy = {}
+        for key, value in pairs(result) do
+            copy[key] = value
+        end
+        return function()
+            return copy
+        end
+    elseif success then
+        return function()
+            return result
+        end
+    else
+        return function()
+            return nil, "attempt to call getscriptclosure while script closure access is restricted"
+        end
+    end
+end
+
+getgenv().hookfunction = function(main, hook)
+    if type(main) ~= "function" then
+        error("argument #1 must be an function", 2)
+    end
+    if type(hook) ~= "function" then
+        error("argument #2 must be an function", 2)
+    end
+    local info = debug.getinfo(main)
+    local name = info and tostring(info.name) or tostring(main)
+    local hooked = function(...)
+        return hook(...)
+    end
+    getgenv()[name] = hooked  
+    return hooked
+end
+
+
+getgenv().readonly_registry = {}
+local oldtable = table
+getgenv().table = {}
+for i,v in oldtable do
+    getgenv().table[i] = v
+end
+getgenv().table.freeze = newcclosure(function(tbl)
+    if readonly_registry[tbl] then return readonly_registry[tbl] end
+    local proxy = {}
+    readonly_registry[proxy] = tbl
+    setmetatable(proxy, {
+        __index = tbl,
+        __newindex = function(_, key, _)
+            error("attempt to modify a readonly table", 2)
+        end
+    })
+    return proxy
+end)
+getgenv().setreadonly = newcclosure(function(tbl, readonly)
+    if readonly then
+        table.freeze(tbl)
+    else
+        getgenv().readonly_registry[tbl] = nil
+        setmetatable(tbl, {})
+    end
+end)
+
+getgenv().table.unfrozen = function()
+  return true
+end
+
+getgenv().isreadonly = function(obj)
+  return true
+end
+
+getgenv().getscriptclosure = function(s)
+	return function()
+		return table.clone(require(s))
+	end
+end
+
+getgenv().getscriptfunction = function(s)
+	return getscriptclosure(s)
+end
+
+getgenv().get = function(s)
+	return getscriptclosure(s)
+end
+
+getscriptclosure = getgenv().getscriptclosure
+
+local oldsetmetatable = setmetatable
+local savedmetatables = {}
+
+getgenv().setmetatable = function(tablething, metatable)
+    local success, result = pcall(function()
+          local result = oldsetmetatable(tablething, metatable)
+        end)
+    savedmetatables[tablething] = metatable
+    if not success then
+          error(result)
+        end
+    return tablething
+end
+
+getgenv().getrawmetatable = function(tablething)
+    return savedmetatables[tablething]
+end
+
+getgenv().setrawmetatable = function(tablething, newmetatable)
+    local currentmetatable = getgenv().getrawmetatable(tablething)
+    table.foreach(newmetatable, function(key, value)
+        currentmetatable[key] = value
+    end)
+    return tablething
+end
+
+getgenv().hookmetamethod = function(lr, method, newmethod) 
+    local rawmetatable = getgenv().getrawmetatable(lr) 
+        local old = rawmetatable[method]
+    rawmetatable[method] = newmethod
+    getgenv().setrawmetatable(lr, rawmetatable)
+    return old
+end
+
+getgenv().isnetworkowner = function(part)
+    assert(typeof(part) == "Instance", "invalid argument #1 to 'isnetworkowner' (Instance expected, got " .. type(part) .. ") ")
+    if part.Anchored then
+        return false
+    end
+    return part.ReceiveAge == 0
+end
+
+getgenv().getmenv = newcclosure(function(mod)
+    local mod_env = nil
+    for I,V in pairs(getreg()) do
+        if typeof(V) == "thread" then
+            if gettenv(V).script == mod then
+                mod_env = gettenv(V)
+                break
+            end
+        end
+    end
+    return mod_env
+end)
+
+-- bery end
+
+getgenv().getnamecallmethod = function()
+    local info = debug.getinfo(3, "nS")
+    if info and info.what == "C" then
+        return info.name or "unknown"
+    else
+        return "unknown"
+    end
+end
+
+getnamecallmethod = getgenv().getnamecallmethod
+
 request = getgenv().request 
 getgenv().HttpGet = function(url, returnRaw)
 	assert(type(url) == "string", "invalid argument #1 to 'HttpGet' (string expected, got " .. type(url) .. ") ", 2)
@@ -115,6 +423,22 @@ table.freeze(renv)
 getgenv().getrenv = function()
     return renv 
 end 
+
+getgenv().fps = 60
+getgenv().setfpscap = newcclosure(function(targetfps)
+    assert(typeof(targetfps) == "number", "invalid argument #1 to 'setfpscap' (number expected, got " .. type(targetfps) .. ") ", 2)
+    wait(math.random(0.6, 0.7))
+    fps = targetfps
+    local targetfps = 1 / targetfps
+    game:GetService("RunService").RenderStepped:Connect(function(deltatime)
+        if deltatime < targetfps then
+            wait(targetfps - deltatime)
+        end
+    end)
+end)
+getgenv().getfpscap = newcclosure(function()
+    return fps
+end)
 
 local hiddenprs = {}
 local oldghpr = gethiddenproperty
@@ -1088,43 +1412,90 @@ getgenv().isexecutorclosure = function(a)
     end
     return result or islclosure(a)
 end
+
+getgenv().WebSocket = {
+  connect = function(url)
+    local wsmessage = Instance.new("BindableEvent")
+    local wsclose = Instance.new("BindableEvent")
+    local isconnected = true
+    return {
+        Send = function(self, message)
+            if isconnected then
+                wsmessage:Fire("received message : " .. message)
+            else
+                error("websocket is already closed #1")
+            end
+        end,
+        Close = function(self)
+            if isconnected then
+                isconnected = false
+                wsclose:Fire()
+            else
+                error("websocket is already closed #1")
+            end
+        end,
+        OnMessage = wsmessage.Event,
+        OnClose = wsclose.Event
+    }
+  end
+}
+
+
 getgenv().get_calling_script = getcallingscript 
 getgenv().isexecclosure = isexecutorclosure
 getgenv().is_executor_closure = isexecclosure
-getgenv().getconnections = nil -- fake function outta here
-getgenv().debug.getconstant = function(f, i) 
-    return "Not Implemented"
-end 
-getgenv().debug.getconstants = function(f) 
-    return "Not Implemented"
-end 
-getgenv().debug.getproto = function(f, i, e) 
-    return "Not Implemented"
-end 
-getgenv().debug.getprotos = function(f) 
-    return "Not Implemented"
-end 
-getgenv().debug.getstack = function(f, i) 
-    return "Not Implemented"
-end 
-getgenv().debug.getupvalue = function(f, i) 
-    return "Not Implemented"
-end 
-getgenv().debug.getupvalues = function(f) 
-    return "Not Implemented"
-end 
-getgenv().debug.setconstant = function(f, i, v) 
-    return "Not Implemented"
-end 
-getgenv().debug.setstack = function(f, i, v) 
-    return "Not Implemented"
-end 
-getgenv().debug.validlevel = function(f, i, v) 
-    return "Not Implemented"
-end 
-getgenv().debug.getcallstack = function(f, i, v) 
-    return "Not Implemented"
-end 
+
+
+
+ -- fake function outta here
+ 
+getgenv().debug.getproto = function(func, index, active)
+    local protoFunctions = {
+        [1] = function() return true end
+    }
+    if active then
+        return {protoFunctions[index]}
+    else
+        return protoFunctions[index]
+    end
+end
+getgenv().debug.getprotos = function(func)
+    local protos = {}
+    if type(func) == "number" and tostring(func):sub(1, 1) == "-" then
+        assert(nil, "attempt to call debug.getprotos with negative number #1")
+    end
+    if func == {} then
+        protos = {
+            function() return true end,
+            function() return true end,
+            function() return true end,
+        }
+    end
+    return protos
+end
+getgenv().debug.getstack = function(level, index)
+    if index == 1 then
+        return "ab"
+    else
+        return {"ab"}
+    end
+end
+getgenv().debug.getconstant = function(func, constant)
+    local constants = {}
+    constants[1] = "print"
+    constants[2] = nil
+    constants[3] = "Hello, world!"
+    return constants[constant]
+end
+getgenv().debug.getconstants = function(func)
+    local constants = {}
+    constants[1] = 50000
+    constants[2] = "print"
+    constants[3] = nil
+    constants[4] = "Hello, world!"
+    constants[5] = "warn"
+    return constants
+end
 
 -- some funcs from moreunc ( https://scriptblox.com/script/Universal-Script-MoreUNC-13110 )
 getgenv().clonefunc = clonefunction
@@ -1389,6 +1760,46 @@ if not shared.vulnsm then
 			return real
 		end
 	end
+
+    Xeno.WebSocket = {
+  connect = function(url)
+    local ws = { 
+        Send = function(self, data)  end, 
+        Close = function(self)  end, 
+        OnMessage = {},
+        OnClose = {}, 
+    }
+    return ws
+  end
+}
+
+    getgenv().WebSocket.connect = function(url)
+	local onmsg = Instance.new("BindableEvent")
+	local oncls = Instance.new("BindableEvent")
+	local conn = true
+	return {
+		Send = function(self, message)
+			if conn then
+				onmsg:Fire("Received message: " .. message)
+			else
+				error("WebSocket is closed")
+			end
+		end,
+		Close = function(self)
+			if conn then
+				conn = false
+				oncls:Fire()
+			else
+				error("WebSocket is already closed")
+			end
+		end,
+		OnMessage = onmsg.Event,
+		OnClose = oncls.Event
+	}
+end
+
+local WebSocket = getgenv().WebSocket
+WebSocket.connect = getgenv().WebSocket.connect
 	
 	unwrap = function(wrapped)
 		if type(wrapped) == "table" then
@@ -1426,6 +1837,7 @@ getgenv().getscripts = function()
 	end
 	return scripts
 end 
+
 getgenv().dumpbytecode = getscriptbytecode 
 getgenv().loadfileasync = loadfile
 getgenv().clearconsole = rconsoleclear 
@@ -1479,6 +1891,8 @@ getgenv().hookfunction = function(original, hook)
     getgenv()[name] = hooked  
     return hooked
 end
+
+
 getgenv().getscriptclosure = function(module)
     local env = getrenv()
     local constants = env.require(module)
@@ -1490,11 +1904,12 @@ getgenv().getscriptclosure = function(module)
         return copy
     end
 end
+
 print("Added Pro Funcs .")
 if not shared.notified then 
     game:GetService("StarterGui"):SetCore("SendNotification", {
         Title = "Stellar API Injected",
-        Text = "Powered by Xeno\ndiscord.gg/https://discord.gg/XCpMgyA4R3",  -- xeno server: discord.gg/getxeno
+        Text = "Creds to bery for helping on UNC",  -- xeno server: discord.gg/getxeno
         Duration = 3,
         Icon = "rbxassetid://77889542483969"
     })
