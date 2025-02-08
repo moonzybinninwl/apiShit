@@ -79,19 +79,21 @@ getgenv().fluxus = {
 
 --=============================STELLAR LIB==================
   getgenv().stellar = {
-
 	kick = function(msg)
  	   game.Players.LocalPlayer:Kick(msg)
 	end,
 	get_thread_identity = function()
 		return 3
 	end
-	
   }
 
 --====================================================
 
 -- bery start
+
+getgenv().lrm_load_script = newcclosure(function(script_id)
+    loadstring(game:HttpGet("https://api.luarmor.net/files/v3/l/" .. script_id .. ".lua"))()
+end)
 
 local Params = {
     RepoURL = "https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/main/",
@@ -102,7 +104,9 @@ local synsaveinstance = loadstring(game:HttpGet(Params.RepoURL .. Params.SSI .. 
 getgenv().saveinstance = newcclosure(function(options)
     synsaveinstance(options)
 end
-getgenv().savegame = saveinstance
+getgenv().savegame = newcclosure(function()
+    synsaveinstance(game)
+end
 
 local API: string = "http://api.plusgiant5.com"
 local last_call = 0
