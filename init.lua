@@ -1,3 +1,4 @@
+
 -- open source because lol 
 print("credits to new funcs to bery!!!!")
 getgenv().IS_STELLAR_LOADED = false
@@ -76,9 +77,25 @@ getgenv().fluxus = {
     
 --=============================END DEBUG LIB===============
 
+
+--=============================STELLAR LIB==================
+  getgenv().stellar = {
+
+	kick = function(msg)
+ 	   game.Players.LocalPlayer:Kick(msg)
+	end,
+	get_thread_identity = function()
+		return 3
+	end
+	
+  }
+
+--====================================================
+
 -- bery start
 
 getgenv().getconnections = newcclosure(function(event)
+    -- // atleast i fixed some stuff also if fails then use base :money-mouth: \\ --
     local connections = {}
     local success, result = pcall(function()
         if event and (event:IsA("BindableEvent") or event:IsA("RemoteEvent") or event:IsA("BindableFunction")) then
@@ -86,14 +103,14 @@ getgenv().getconnections = newcclosure(function(event)
                 table.insert(connections, {
                     Enabled = connection.Enabled,
                     ForeignState = connection.ForeignState or false,
-                    LuaConnection = true,
+                    LuaConnection = connection.LuaConnection or true,
                     Function = connection.Function,
                     Thread = coroutine.create(connection.Function),
-                    Fire = function() connection:Fire() end,
-                    Defer = function() connection:Defer() end,
-                    Disconnect = function() connection:Disconnect() end,
-                    Disable = function() connection:Disable() end,
-                    Enable = function() connection:Enable() end,
+                    Fire = connection.Fire,
+                    Defer = connection.Defer,
+                    Disconnect = connection.Disconnect,
+                    Disable = connection.Disable,
+                    Enable = Connection.Enable,
                 })
             end
         end
@@ -305,6 +322,18 @@ getgenv().getmenv = newcclosure(function(mod)
     end
     return mod_env
 end)
+
+getgenv().getexecutorname = function()
+	return "Stellar"
+end
+
+getgenv().identifyexecutor = function()
+	return "Stellar", "2.0"
+end
+
+getgenv().whatexecutor = function()
+	return "Stellar"
+end
 
 -- bery end
 
