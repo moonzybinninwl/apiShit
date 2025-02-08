@@ -78,7 +78,7 @@ getgenv().fluxus = {
 
 
 --=============================STELLAR LIB==================
-  stellar = {
+  getgenv().stellar = {
 
 	kick = function(msg)
  	   game.Players.LocalPlayer:Kick(msg)
