@@ -93,6 +93,11 @@ getgenv().fluxus = {
 
 -- bery start
 
+getgenv().messagebox = newcclosure(function(text, title, flags)
+    -- // wow im nice for saying its not made :D \\ --
+    warn("[Stellar]: Not available")
+end
+
 getgenv().getconnections = newcclosure(function(event)
     -- // atleast i fixed some stuff also if fails then use base :money-mouth: \\ --
     local connections = {}
