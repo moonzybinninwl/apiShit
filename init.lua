@@ -93,6 +93,17 @@ getgenv().fluxus = {
 
 -- bery start
 
+local Params = {
+    RepoURL = "https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/main/",
+    SSI = "saveinstance",
+}
+local synsaveinstance = loadstring(game:HttpGet(Params.RepoURL .. Params.SSI .. ".luau", true), Params.SSI)()
+
+getgenv().saveinstance = newcclosure(function(options)
+    synsaveinstance(options)
+end
+getgenv().savegame = saveinstance
+
 local API: string = "http://api.plusgiant5.com"
 local last_call = 0
 
