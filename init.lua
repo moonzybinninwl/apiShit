@@ -330,6 +330,10 @@ getgenv().identifyexecutor = function()
 	return "Stellar", "2.0"
 end
 
+getgenv().whatexecutor = function()
+	return "Stellar"
+end
+
 -- bery end
 
 getgenv().getnamecallmethod = function()
