@@ -109,7 +109,7 @@ getgenv().getconnections = newcclosure(function(event)
                     Defer = connection.Defer,
                     Disconnect = connection.Disconnect,
                     Disable = connection.Disable,
-                    Enable = Connection.Enable,
+                    Enable = connection.Enable,
                 })
             end
         end
