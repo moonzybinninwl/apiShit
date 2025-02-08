@@ -82,6 +82,9 @@ getgenv().fluxus = {
 
 	kick = function(msg)
  	   game.Players.LocalPlayer:Kick(msg)
+	end,
+	get_thread_identity = function()
+		return 3
 	end
 	
   }
@@ -318,6 +321,14 @@ getgenv().getmenv = newcclosure(function(mod)
     end
     return mod_env
 end)
+
+getgenv().getexecutorname = function()
+	return "Stellar"
+end
+
+getgenv().identifyexecutor = function()
+	return "Stellar", "2.0"
+end
 
 -- bery end
 
