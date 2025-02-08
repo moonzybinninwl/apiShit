@@ -91,6 +91,7 @@ getgenv().fluxus = {
 -- bery start
 
 getgenv().getconnections = newcclosure(function(event)
+    -- // atleast i fixed some stuff also if fails then use base :money-mouth: \\ --
     local connections = {}
     local success, result = pcall(function()
         if event and (event:IsA("BindableEvent") or event:IsA("RemoteEvent") or event:IsA("BindableFunction")) then
@@ -98,14 +99,14 @@ getgenv().getconnections = newcclosure(function(event)
                 table.insert(connections, {
                     Enabled = connection.Enabled,
                     ForeignState = connection.ForeignState or false,
-                    LuaConnection = true,
+                    LuaConnection = connection.LuaConnection or true,
                     Function = connection.Function,
                     Thread = coroutine.create(connection.Function),
-                    Fire = function() connection:Fire() end,
-                    Defer = function() connection:Defer() end,
-                    Disconnect = function() connection:Disconnect() end,
-                    Disable = function() connection:Disable() end,
-                    Enable = function() connection:Enable() end,
+                    Fire = connection.Fire,
+                    Defer = connection.Defer,
+                    Disconnect = connection.Disconnect,
+                    Disable = connection.Disable,
+                    Enable = Connection.Enable,
                 })
             end
         end
