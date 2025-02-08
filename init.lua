@@ -76,6 +76,18 @@ getgenv().fluxus = {
     
 --=============================END DEBUG LIB===============
 
+
+--=============================STELLAR LIB==================
+  stellar = {
+
+	kick = function(msg)
+ 	   game.Players.LocalPlayer:Kick(msg)
+	end
+	
+  }
+
+--====================================================
+
 -- bery start
 
 getgenv().getconnections = newcclosure(function(event)
