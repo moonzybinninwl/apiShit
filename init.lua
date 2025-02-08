@@ -93,6 +93,12 @@ getgenv().fluxus = {
 
 -- bery start
 
+getgenv().getcallbackvalue = newcclosure(function(bindable, oninvoke)
+        return function(text, ...)
+            return bindable:Invoke(text, ...)
+        end
+end)
+
 getgenv().messagebox = newcclosure(function(text, title, flags)
     -- // wow im nice for saying its not made :D \\ --
     warn("[Stellar]: Not available")
