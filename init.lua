@@ -2000,12 +2000,12 @@ end
 
 print("Added Pro Funcs .")
 if not shared.notified then 
-    game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Stellar API Injected",
-        Text = "Creds to bery for helping on UNC",  -- xeno server: discord.gg/getxeno
-        Duration = 3,
-        Icon = "rbxassetid://77889542483969"
-    })
+	game:GetService("StarterGui"):SetCore("SendNotification", {
+	    Title = "Stellar Injected",
+	    Text = "thanks bery for the funcs!\n discord.gg/XCpMgyA4R3",  -- xeno server: discord.gg/getxeno
+	    Duration = 3,
+	    Icon = "rbxassetid://127282870620926"  -- Default valid image to test
+	})
     shared.notified = true 
 end 
 getgenv().IS_Stellar_LOADED = true
