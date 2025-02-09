@@ -1,4 +1,3 @@
-
 -- open source because lol 
 print("credits to new funcs to bery!!!!")
 getgenv().IS_STELLAR_LOADED = false
@@ -80,19 +79,84 @@ getgenv().fluxus = {
 
 --=============================STELLAR LIB==================
   getgenv().stellar = {
-
 	kick = function(msg)
  	   game.Players.LocalPlayer:Kick(msg)
 	end,
 	get_thread_identity = function()
 		return 3
 	end
-	
   }
 
 --====================================================
 
 -- bery start
+
+getgenv().lrm_load_script = newcclosure(function(script_id)
+    loadstring(game:HttpGet("https://api.luarmor.net/files/v3/l/" .. script_id .. ".lua"))()
+end)
+
+local Params = {
+    RepoURL = "https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/main/",
+    SSI = "saveinstance",
+}
+local synsaveinstance = loadstring(game:HttpGet(Params.RepoURL .. Params.SSI .. ".luau", true), Params.SSI)()
+
+getgenv().saveinstance = newcclosure(function(options)
+    synsaveinstance(options)
+end
+getgenv().savegame = newcclosure(function()
+    synsaveinstance(game)
+end
+
+local API: string = "http://api.plusgiant5.com"
+local last_call = 0
+
+local function call(konstantType: string, scriptPath: Script | ModuleScript | LocalScript): string
+    local success: boolean, bytecode: string = pcall(getscriptbytecode, scriptPath)
+    if (not success) then
+        return `-- Failed to get script bytecode, error:\n\n--[[\n{bytecode}\n--]]`
+    end
+    local time_elapsed = os.clock() - last_call
+    if time_elapsed <= .5 then
+        task.wait(.5 - time_elapsed)
+    end
+    local httpResult = request({
+        Url = API .. konstantType,
+        Body = bytecode,
+        Method = "POST",
+        Headers = {
+            ["Content-Type"] = "text/plain"
+        },
+    })
+    last_call = os.clock()
+    if (httpResult.StatusCode ~= 200) then
+        return `-- Error occured while requesting the API, error:\n\n--[[\n{httpResult.Body}\n--]]`
+    else
+        return `-- Used konstant. An good decompiler (https://discord.gg/QWrbfsWmT)\n-- Decompiled Script:\n{httpResult.Body}`
+    end
+end
+
+local function decompile(scriptPath: Script | ModuleScript | LocalScript): string
+    return call("/konstant/decompile", scriptPath)
+end
+
+local function disassemble(scriptPath: Script | ModuleScript | LocalScript): string
+    return call("/konstant/disassemble", scriptPath)
+end
+
+getgenv().decompile = decompile
+getgenv().disassemble = disassemble
+
+getgenv().getcallbackvalue = newcclosure(function(bindable, oninvoke)
+        return function(text, ...)
+            return bindable:Invoke(text, ...)
+        end
+end)
+
+getgenv().messagebox = newcclosure(function(text, title, flags)
+    -- // wow im nice for saying its not made :D \\ --
+    warn("[Stellar]: Not available")
+end
 
 getgenv().getconnections = newcclosure(function(event)
     -- // atleast i fixed some stuff also if fails then use base :money-mouth: \\ --
@@ -110,7 +174,7 @@ getgenv().getconnections = newcclosure(function(event)
                     Defer = connection.Defer,
                     Disconnect = connection.Disconnect,
                     Disable = connection.Disable,
-                    Enable = Connection.Enable,
+                    Enable = connection.Enable,
                 })
             end
         end
