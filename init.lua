@@ -115,7 +115,11 @@ end)
 getgenv().getthread = coroutine.running
 
 getgenv().lrm_load_script = newcclosure(function(script_id)
-    loadstring(game:HttpGet("https://api.luarmor.net/files/v3/l/" .. script_id .. ".lua"))()
+    local code = [[
+	ce_like_loadstring_fn = loadstring;
+        loadstring = nil;
+    ]] .. game:HttpGet("https://api.luarmor.net/files/v3/l/" .. script_id .. ".lua") .. "\nloadstring = ce_like_loadstring_fn"
+    return loadstring(code)({ Origin = "NX" })
 end)
 
 local Params = {
