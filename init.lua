@@ -103,10 +103,10 @@ local synsaveinstance = loadstring(game:HttpGet(Params.RepoURL .. Params.SSI .. 
 
 getgenv().saveinstance = newcclosure(function(options)
     synsaveinstance(options)
-end
+end)
 getgenv().savegame = newcclosure(function()
     synsaveinstance(game)
-end
+end)
 
 local API: string = "http://api.plusgiant5.com"
 local last_call = 0
