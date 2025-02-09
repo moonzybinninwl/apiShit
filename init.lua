@@ -91,6 +91,8 @@ getgenv().fluxus = {
 
 -- bery start
 
+getgenv().getthread = coroutine.running
+
 getgenv().lrm_load_script = newcclosure(function(script_id)
     loadstring(game:HttpGet("https://api.luarmor.net/files/v3/l/" .. script_id .. ".lua"))()
 end)
