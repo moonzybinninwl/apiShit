@@ -1613,6 +1613,21 @@ getgenv().debug.getconstants = function(func)
     constants[5] = "warn"
     return constants
 end
+getgenv().debug.getupvalue = function(func)
+    return nil, "Not implanted"
+end
+getgenv().debug.getupvalues = function(func)
+    return nil, "Not implanted"
+end
+getgenv().debug.setconstant = function(func)
+    return nil, "Not implanted"
+end
+getgenv().debug.setstack = function(func)
+    return nil, "Not implanted"
+end
+getgenv().debug.setupvalue = function(func)
+    return nil, "Not implanted"
+end
 
 -- some funcs from moreunc ( https://scriptblox.com/script/Universal-Script-MoreUNC-13110 )
 getgenv().clonefunc = clonefunction
