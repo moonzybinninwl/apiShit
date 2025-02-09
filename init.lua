@@ -91,6 +91,27 @@ getgenv().fluxus = {
 
 -- bery start
 
+getgenv().replicatesignal = newcclosure(function(signal, ...)
+    if typeof(signal) == "RBXScriptSignal" then
+        local connections = getconnections(signal)
+        for _, connection in ipairs(connections) do
+            if connection and connection.Function and connection.Enabled then
+                pcall(connection.Function, ...)
+            end
+        end
+    elseif typeof(signal) == "Instance" then
+        if signal:IsA("RemoteEvent") then
+            signal:FireServer(...)
+        elseif signal:IsA("RemoteFunction") then
+            signal:InvokeServer(...)
+        else
+            error("argument #1 is not supported", 2)
+        end
+    else
+        error("argument #1 is invalid signal type", 2)
+    end
+end)
+
 getgenv().getthread = coroutine.running
 
 getgenv().lrm_load_script = newcclosure(function(script_id)
