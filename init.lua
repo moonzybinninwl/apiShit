@@ -1,5 +1,6 @@
 -- open source because lol 
-print("credits to new funcs to bery!!!!")
+print("Env by binninwl, salad and bery")
+print("Stellar: ENV version 1.2.0.1")
 getgenv().IS_STELLAR_LOADED = false
 local oldr = request 
 getgenv().request = function(options)
