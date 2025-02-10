@@ -288,21 +288,15 @@ getgenv().getscriptfunction = function(script)
     end
 end
 
-getgenv().hookfunction = function(main, hook)
-    if type(main) ~= "function" then
-        error("argument #1 must be an function", 2)
+getgenv().hookfunction = newcclosure(function(func, rep)
+    local env = getfenv(debug.info(2, 'f'))
+    for i, v in pairs(env) do
+        if v == func then
+            env[i] = rep
+        end
     end
-    if type(hook) ~= "function" then
-        error("argument #2 must be an function", 2)
-    end
-    local info = debug.getinfo(main)
-    local name = info and tostring(info.name) or tostring(main)
-    local hooked = function(...)
-        return hook(...)
-    end
-    getgenv()[name] = hooked  
-    return hooked
-end
+end)
+getgenv().replaceclosure = getgenv().hookfunction
 
 
 getgenv().readonly_registry = {}
