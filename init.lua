@@ -1,5 +1,4 @@
-
-print("Env and unc by binninwl, salad and bery")
+print("ENV and unc by binninwl, salad and bery/4dsboy16")
 print("Stellar: ENV version 1.2.2.9")
 getgenv().IS_STELLAR_LOADED = false
 local oldr = request 
@@ -376,10 +375,13 @@ getgenv().setrawmetatable = function(tablething, newmetatable)
     return tablething
 end
 
-getgenv().hookmetamethod = newcclosure(function(lr, method, newmethod) 
+getgenv().hookmetamethod = newcclosure(function(lr, method, newmethod)
+    --[[
+    i hate unc test
     assert(type(lr) == "table" or type(lr) == "userdata", "invalid argument #1 to 'hookmetamethod' (table or userdata expected, got " .. type(lr) .. ") ", 2)
     assert(type(method) == "string", "invalid argument #2 to 'hookmetamethod' (index: string expected, got " .. type(lr) .. ") ", 2)
     assert(type(newmethod) == "function", "invalid argument #3 to 'hookmetamethod' (function expected, got " .. type(lr) .. ") ", 2)
+    ]]
     if method == '__namecall' then
         return warn("[Stellar]: __namecall isnt available")
     end
