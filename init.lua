@@ -2025,7 +2025,7 @@ print("Added Pro Funcs .")
 if not shared.notified then 
 	game:GetService("StarterGui"):SetCore("SendNotification", {
 	    Title = "Stellar Injected",
-	    Text = "thanks bery for the funcs!\n discord.gg/XCpMgyA4R3",  -- xeno server: discord.gg/getxeno
+	    Text = "thanks bery/4dsboy16 for the funcs!\n discord.gg/XCpMgyA4R3",  -- xeno server: discord.gg/getxeno
 	    Duration = 3,
 	    Icon = "rbxassetid://127282870620926"  -- Default valid image to test
 	})
