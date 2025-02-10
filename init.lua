@@ -1999,22 +1999,6 @@ game:GetService("UserInputService").InputEnded:Connect(function(input, processed
         end
     end
 end)
-getgenv().hookfunction = function(original, hook)
-    if type(original) ~= "function" then
-        error("The first arg must be a function (original function).")
-    end
-    if type(hook) ~= "function" then
-        error("The second arg must be a function (hook).")
-    end
-    local info = debug.getinfo(original)
-    local name = info and info.name or tostring(original)
-    getgenv().ogfs[name] = original 
-    local hooked = function(...)
-        return hook(...)
-    end
-    getgenv()[name] = hooked  
-    return hooked
-end
 
 
 getgenv().getscriptclosure = function(module)
