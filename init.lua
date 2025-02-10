@@ -1,5 +1,5 @@
 print("ENV and unc by binninwl, salad and bery/4dsboy16")
-print("Stellar: ENV version 1.2.2.9")
+print("Stellar: ENV version 1.2.3.2")
 getgenv().IS_STELLAR_LOADED = false
 local oldr = request 
 getgenv().request = function(options)
