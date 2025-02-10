@@ -1577,10 +1577,8 @@ getgenv().debug.getproto = function(func, index, active)
     end
 end
 getgenv().debug.getprotos = function(func)
+    assert(type(func) == "function", "bad argument #1 to 'getprotos' (function expected, got " .. type(func) .. ") ")
     local protos = {}
-    if type(func) == "number" and tostring(func):sub(1, 1) == "-" then
-        assert(nil, "attempt to call debug.getprotos with negative number #1")
-    end
     if func == {} then
         protos = {
             function() return true end,
