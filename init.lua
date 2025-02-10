@@ -156,7 +156,7 @@ local function call(konstantType: string, scriptPath: Script | ModuleScript | Lo
     if (httpResult.StatusCode ~= 200) then
         return `-- Error occured while requesting the API, error:\n\n--[[\n{httpResult.Body}\n--]]`
     else
-        return `-- Used konstant. An good decompiler (https://discord.gg/QWrbfsWmT)\n-- Decompiled Script:\n{httpResult.Body}`
+        return httpResult.Body
     end
 end
 
@@ -1614,19 +1614,19 @@ getgenv().debug.getconstants = function(func)
     return constants
 end
 getgenv().debug.getupvalue = function(func)
-    return nil, "Not implanted"
+    return nil, "Not implemented"
 end
 getgenv().debug.getupvalues = function(func)
-    return nil, "Not implanted"
+    return nil, "Not implemented"
 end
 getgenv().debug.setconstant = function(func)
-    return nil, "Not implanted"
+    return nil, "Not implemented"
 end
 getgenv().debug.setstack = function(func)
-    return nil, "Not implanted"
+    return nil, "Not implemented"
 end
 getgenv().debug.setupvalue = function(func)
-    return nil, "Not implanted"
+    return nil, "Not implemented"
 end
 
 -- some funcs from moreunc ( https://scriptblox.com/script/Universal-Script-MoreUNC-13110 )
