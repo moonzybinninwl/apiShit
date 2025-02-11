@@ -1,5 +1,5 @@
 print("ENV and unc by binninwl, salad and bery/4dsboy16")
-print("Stellar: ENV version 1.2.3.8")
+print("Stellar: ENV version 1.2.4.4")
 print("[LATEST FIX]: hookmetamethod unavailable revert")
 getgenv().IS_STELLAR_LOADED = false
 local oldr = request 
