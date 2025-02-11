@@ -248,13 +248,17 @@ getgenv().getconnections = newcclosure(function(event)
 end)
 
 getgenv().get_signal_cons = getgenv().getconnections
-		
-getgenv().setfflag = function(fn, value)
+
+getgenv().getaffiliateid = newcclosure(function()
+    return "Stellar"
+end
+
+getgenv().setfflag = newcclosure(function(fn, value)
     if not getgenv().ffs then
         getgenv().ffs = {}
     end
     getgenv().ffs[fn] = value
-end
+end)
 setfflag("WndProcessCheck", 6)
 setfflag("AllowVideoPreRoll", true)
 setfflag("DFFlagAbuseReportInExperienceStateCaptureMode", true)
@@ -276,13 +280,13 @@ setfflag("FFlagAppRatingTelemetry", true)
 setfflag("FFlagAppNavUpdateNavBar", true)
 setfflag("FFlagAppNavUpdateUseIsSpatial", true)
 setfflag("FFlagAssetPreloadingIXP", false)
-getgenv().getfflag = function(fn)
+getgenv().getfflag = newcclosure(function(fn)
     if getgenv().ffs and getgenv().ffs[fn] ~= nil then
         return getgenv().ffs[fn]
     else
         return nil  
     end
-end
+end)
 
 
 
@@ -294,7 +298,7 @@ getgenv().makewritable = newcclosure(function(tbl)
     return getgenv().setreadonly(tbl, false)
 end)
 
-getgenv().getscriptfunction = function(script)
+getgenv().getscriptfunction = newcclosure(function(script)
     local success, result = pcall(function()
         return getrenv().require(script)
     end)
@@ -315,7 +319,7 @@ getgenv().getscriptfunction = function(script)
             return nil, "attempt to call getscriptclosure while script closure access is restricted"
         end
     end
-end
+end)
 
 getgenv().hookfunction = newcclosure(function(func, rep)
     local env = getfenv(debug.info(2, 'f'))
@@ -357,55 +361,55 @@ end)
 
 getgenv().get_hidden_gui = gethui
 
-getgenv().table.unfrozen = function()
+getgenv().table.unfrozen = newcclosure(function()
   return true
-end
+end)
 
-getgenv().isreadonly = function(obj)
+getgenv().isreadonly = newcclosure(function(obj)
   return true
-end
+end)
 
-getgenv().getscriptclosure = function(s)
+getgenv().getscriptclosure = newcclosure(function(s)
 	return function()
 		return table.clone(require(s))
 	end
-end
+end)
 
-getgenv().getscriptfunction = function(s)
+getgenv().getscriptfunction = newcclosure(functionfunction(s)
 	return getscriptclosure(s)
-end
+end)
 
-getgenv().get = function(s)
+getgenv().get = newcclosure(function(s)
 	return getscriptclosure(s)
-end
+end)
 
 getscriptclosure = getgenv().getscriptclosure
 
 local oldsetmetatable = setmetatable
 local savedmetatables = {}
 
-getgenv().setmetatable = function(tablething, metatable)
+getgenv().setmetatable = newcclosure(function(tbl, metatable)
     local success, result = pcall(function()
-          local result = oldsetmetatable(tablething, metatable)
-        end)
-    savedmetatables[tablething] = metatable
+        local result = oldsetmetatable(tbl, metatable)
+    end)
+    savedmetatables[tbl] = metatable
     if not success then
-          error(result)
-        end
-    return tablething
-end
+        error(result)
+    end
+    return tbl
+end)
 
-getgenv().getrawmetatable = function(tablething)
-    return savedmetatables[tablething]
-end
+getgenv().getrawmetatable = newcclosure(function(tbl)
+    return savedmetatables[tbl]
+end)
 
-getgenv().setrawmetatable = function(tablething, newmetatable)
-    local currentmetatable = getgenv().getrawmetatable(tablething)
+getgenv().setrawmetatable = newcclosure(function(tbl, newmetatable)
+    local currentmetatable = getgenv().getrawmetatable(tbl)
     table.foreach(newmetatable, function(key, value)
         currentmetatable[key] = value
     end)
-    return tablething
-end
+    return tbl
+end)
 
 getgenv().hookmetamethod = newcclosure(function(lr, method, newmethod)
     --[[
@@ -424,13 +428,13 @@ getgenv().hookmetamethod = newcclosure(function(lr, method, newmethod)
     return old
 end)
 
-getgenv().isnetworkowner = function(part)
+getgenv().isnetworkowner = newcclosure(function(part)
     assert(typeof(part) == "Instance", "invalid argument #1 to 'isnetworkowner' (Instance expected, got " .. type(part) .. ") ")
     if part.Anchored then
         return false
     end
     return part.ReceiveAge == 0
-end
+end)
 
 getgenv().getmenv = newcclosure(function(mod)
     local mod_env = nil
@@ -445,17 +449,17 @@ getgenv().getmenv = newcclosure(function(mod)
     return mod_env
 end)
 
-getgenv().getexecutorname = function()
+getgenv().getexecutorname = newcclosure(function()
 	return "Stellar"
-end
+end)
 
-getgenv().identifyexecutor = function()
+getgenv().identifyexecutor = newcclosure(function()
 	return "Stellar", "2.0"
-end
+end)
 
-getgenv().whatexecutor = function()
+getgenv().whatexecutor = newcclosure(function()
 	return "Stellar"
-end
+end)
 
 -- bery end
 
