@@ -355,6 +355,8 @@ getgenv().setreadonly = newcclosure(function(tbl, readonly)
     end
 end)
 
+getgenv().get_hidden_gui = gethui
+
 getgenv().table.unfrozen = function()
   return true
 end
