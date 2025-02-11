@@ -92,6 +92,26 @@ getgenv().fluxus = {
 
 -- bery start
 
+-- // i hate to add this but more script support \\ --
+getgenv().nyx = {
+	print = function(...)
+		local message = table.concat({...}, ' '):gsub("TestService:", "")
+		game:GetService('TestService'):Message(message)
+	end,
+	identity = function()
+		return 3
+	end,
+	randomstring = function(length)
+		local characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-+[]{}\|;:',<.>/?"
+		local randomString = ""
+		for i = 1, length do
+			local randomIndex = math.random(1, #characters)
+			randomString = randomString .. characters:sub(randomIndex, randomIndex)
+		end
+		return randomString
+	end
+}
+
 getgenv().replicatesignal = newcclosure(function(signal, ...)
     if typeof(signal) == "RBXScriptSignal" then
         local connections = getconnections(signal)
