@@ -1,5 +1,5 @@
 print("ENV and unc by binninwl, salad and bery/4dsboy16")
-print("Stellar: ENV version 1.2.3.6")
+print("Stellar: ENV version 1.2.3.8")
 print("[LATEST FIX]: hookmetamethod unavailable revert")
 getgenv().IS_STELLAR_LOADED = false
 local oldr = request 
@@ -247,6 +247,8 @@ getgenv().getconnections = newcclosure(function(event)
     return connections
 end)
 
+getgenv().get_signal_cons = getgenv().getconnections
+		
 getgenv().setfflag = function(fn, value)
     if not getgenv().ffs then
         getgenv().ffs = {}
