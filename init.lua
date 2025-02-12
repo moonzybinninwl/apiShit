@@ -1,5 +1,5 @@
 print("ENV and unc by binninwl, salad and bery/4dsboy16")
-print("Stellar: ENV version 1.2.4.4")
+print("Stellar: ENV version 1.2.4.9")
 print("[LATEST FIX]: hookmetamethod unavailable revert")
 getgenv().IS_STELLAR_LOADED = false
 local oldr = request 
@@ -111,6 +111,7 @@ getgenv().nyx = {
 		return randomString
 	end
 }
+
 getgenv().IS_NYX_ENV = function(SECURE)
 	if (SECURE == "SECURE_ENV") then
 		return true
@@ -118,6 +119,52 @@ getgenv().IS_NYX_ENV = function(SECURE)
 		return false
 	end
 end
+
+getgenv().unlockmodulescript = newcclosure(function() end)
+
+local last_render_time = tick()
+
+getgenv().getrenderdelta = newcclosure(function()
+    local now = tick()
+    local delta = now - last_render_time
+    last_render_time = now
+    return delta
+end)
+
+getgenv().checkrbxlocked = newcclosure(function(instance)
+    if typeof(instance) ~= "Instance" then
+        return false
+    end
+    local success = pcall(function() return instance.Name end)
+    return not success
+end)
+
+getgenv().getclassname = newcclosure(function(instance)
+    if typeof(instance) ~= "Instance" then
+        return nil
+    end
+    local success, className = pcall(function() return instance.ClassName end)
+    return success and className or error("argument #1 is rbxlocked")
+end)
+
+getgenv().checkinst = newcclosure(function()
+    return typeof(obj) == "Instance"
+end)
+
+getgenv().checkparentchain = newcclosure(function(instance)
+    if typeof(instance) ~= "Instance" then
+        return false
+    end
+    local current = instance
+    while current do
+        local success = pcall(function() return current.Parent end)
+        if not success then
+            return false
+        end
+        current = current.Parent
+    end
+    return true
+end)
 
 getgenv().replicatesignal = newcclosure(function(signal, ...)
     if typeof(signal) == "RBXScriptSignal" then
