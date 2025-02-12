@@ -1,5 +1,5 @@
 print("ENV and unc by binninwl, salad and bery/4dsboy16")
-print("Stellar: ENV version 1.2.4.9")
+print("Stellar: ENV version 1.2.4.4")
 print("[LATEST FIX]: hookmetamethod unavailable revert")
 getgenv().IS_STELLAR_LOADED = false
 local oldr = request 
@@ -111,7 +111,6 @@ getgenv().nyx = {
 		return randomString
 	end
 }
-
 getgenv().IS_NYX_ENV = function(SECURE)
 	if (SECURE == "SECURE_ENV") then
 		return true
@@ -119,52 +118,6 @@ getgenv().IS_NYX_ENV = function(SECURE)
 		return false
 	end
 end
-
-getgenv().unlockmodulescript = newcclosure(function() end)
-
-local last_render_time = tick()
-
-getgenv().getrenderdelta = newcclosure(function()
-    local now = tick()
-    local delta = now - last_render_time
-    last_render_time = now
-    return delta
-end)
-
-getgenv().checkrbxlocked = newcclosure(function(instance)
-    if typeof(instance) ~= "Instance" then
-        return false
-    end
-    local success = pcall(function() return instance.Name end)
-    return not success
-end)
-
-getgenv().getclassname = newcclosure(function(instance)
-    if typeof(instance) ~= "Instance" then
-        return nil
-    end
-    local success, className = pcall(function() return instance.ClassName end)
-    return success and className or error("argument #1 is rbxlocked")
-end)
-
-getgenv().checkinst = newcclosure(function()
-    return typeof(obj) == "Instance"
-end)
-
-getgenv().checkparentchain = newcclosure(function(instance)
-    if typeof(instance) ~= "Instance" then
-        return false
-    end
-    local current = instance
-    while current do
-        local success = pcall(function() return current.Parent end)
-        if not success then
-            return false
-        end
-        current = current.Parent
-    end
-    return true
-end)
 
 getgenv().replicatesignal = newcclosure(function(signal, ...)
     if typeof(signal) == "RBXScriptSignal" then
@@ -295,17 +248,13 @@ getgenv().getconnections = newcclosure(function(event)
 end)
 
 getgenv().get_signal_cons = getgenv().getconnections
-
-getgenv().getaffiliateid = newcclosure(function()
-    return "Stellar"
-end
-
-getgenv().setfflag = newcclosure(function(fn, value)
+		
+getgenv().setfflag = function(fn, value)
     if not getgenv().ffs then
         getgenv().ffs = {}
     end
     getgenv().ffs[fn] = value
-end)
+end
 setfflag("WndProcessCheck", 6)
 setfflag("AllowVideoPreRoll", true)
 setfflag("DFFlagAbuseReportInExperienceStateCaptureMode", true)
@@ -327,13 +276,13 @@ setfflag("FFlagAppRatingTelemetry", true)
 setfflag("FFlagAppNavUpdateNavBar", true)
 setfflag("FFlagAppNavUpdateUseIsSpatial", true)
 setfflag("FFlagAssetPreloadingIXP", false)
-getgenv().getfflag = newcclosure(function(fn)
+getgenv().getfflag = function(fn)
     if getgenv().ffs and getgenv().ffs[fn] ~= nil then
         return getgenv().ffs[fn]
     else
         return nil  
     end
-end)
+end
 
 
 
@@ -345,7 +294,7 @@ getgenv().makewritable = newcclosure(function(tbl)
     return getgenv().setreadonly(tbl, false)
 end)
 
-getgenv().getscriptfunction = newcclosure(function(script)
+getgenv().getscriptfunction = function(script)
     local success, result = pcall(function()
         return getrenv().require(script)
     end)
@@ -366,7 +315,7 @@ getgenv().getscriptfunction = newcclosure(function(script)
             return nil, "attempt to call getscriptclosure while script closure access is restricted"
         end
     end
-end)
+end
 
 getgenv().hookfunction = newcclosure(function(func, rep)
     local env = getfenv(debug.info(2, 'f'))
@@ -408,55 +357,55 @@ end)
 
 getgenv().get_hidden_gui = gethui
 
-getgenv().table.unfrozen = newcclosure(function()
+getgenv().table.unfrozen = function()
   return true
-end)
+end
 
-getgenv().isreadonly = newcclosure(function(obj)
+getgenv().isreadonly = function(obj)
   return true
-end)
+end
 
-getgenv().getscriptclosure = newcclosure(function(s)
+getgenv().getscriptclosure = function(s)
 	return function()
 		return table.clone(require(s))
 	end
-end)
+end
 
-getgenv().getscriptfunction = newcclosure(functionfunction(s)
+getgenv().getscriptfunction = function(s)
 	return getscriptclosure(s)
-end)
+end
 
-getgenv().get = newcclosure(function(s)
+getgenv().get = function(s)
 	return getscriptclosure(s)
-end)
+end
 
 getscriptclosure = getgenv().getscriptclosure
 
 local oldsetmetatable = setmetatable
 local savedmetatables = {}
 
-getgenv().setmetatable = newcclosure(function(tbl, metatable)
+getgenv().setmetatable = function(tablething, metatable)
     local success, result = pcall(function()
-        local result = oldsetmetatable(tbl, metatable)
-    end)
-    savedmetatables[tbl] = metatable
+          local result = oldsetmetatable(tablething, metatable)
+        end)
+    savedmetatables[tablething] = metatable
     if not success then
-        error(result)
-    end
-    return tbl
-end)
+          error(result)
+        end
+    return tablething
+end
 
-getgenv().getrawmetatable = newcclosure(function(tbl)
-    return savedmetatables[tbl]
-end)
+getgenv().getrawmetatable = function(tablething)
+    return savedmetatables[tablething]
+end
 
-getgenv().setrawmetatable = newcclosure(function(tbl, newmetatable)
-    local currentmetatable = getgenv().getrawmetatable(tbl)
+getgenv().setrawmetatable = function(tablething, newmetatable)
+    local currentmetatable = getgenv().getrawmetatable(tablething)
     table.foreach(newmetatable, function(key, value)
         currentmetatable[key] = value
     end)
-    return tbl
-end)
+    return tablething
+end
 
 getgenv().hookmetamethod = newcclosure(function(lr, method, newmethod)
     --[[
@@ -475,13 +424,13 @@ getgenv().hookmetamethod = newcclosure(function(lr, method, newmethod)
     return old
 end)
 
-getgenv().isnetworkowner = newcclosure(function(part)
+getgenv().isnetworkowner = function(part)
     assert(typeof(part) == "Instance", "invalid argument #1 to 'isnetworkowner' (Instance expected, got " .. type(part) .. ") ")
     if part.Anchored then
         return false
     end
     return part.ReceiveAge == 0
-end)
+end
 
 getgenv().getmenv = newcclosure(function(mod)
     local mod_env = nil
@@ -496,17 +445,17 @@ getgenv().getmenv = newcclosure(function(mod)
     return mod_env
 end)
 
-getgenv().getexecutorname = newcclosure(function()
+getgenv().getexecutorname = function()
 	return "Stellar"
-end)
+end
 
-getgenv().identifyexecutor = newcclosure(function()
+getgenv().identifyexecutor = function()
 	return "Stellar", "2.0"
-end)
+end
 
-getgenv().whatexecutor = newcclosure(function()
+getgenv().whatexecutor = function()
 	return "Stellar"
-end)
+end
 
 -- bery end
 
