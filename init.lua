@@ -298,7 +298,7 @@ getgenv().get_signal_cons = getgenv().getconnections
 
 getgenv().getaffiliateid = newcclosure(function()
     return "Stellar"
-end)
+end
 
 getgenv().setfflag = newcclosure(function(fn, value)
     if not getgenv().ffs then
@@ -422,11 +422,11 @@ getgenv().getscriptclosure = newcclosure(function(s)
 	end
 end)
 
-getgenv().getscriptfunction = newcclosure(function(s)
+getgenv().getscriptfunction = newcclosure(functionfunction(s)
 	return getscriptclosure(s)
 end)
 
-getgenv().get = (function(s)
+getgenv().get = newcclosure(function(s)
 	return getscriptclosure(s)
 end)
 
