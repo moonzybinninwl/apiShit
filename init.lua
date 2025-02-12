@@ -298,9 +298,9 @@ getgenv().get_signal_cons = getgenv().getconnections
 
 getgenv().getaffiliateid = newcclosure(function()
     return "Stellar"
-end
+end)
 
-getgenv().setfflag = (function(fn, value)
+getgenv().setfflag = newcclosure(function(fn, value)
     if not getgenv().ffs then
         getgenv().ffs = {}
     end
@@ -345,7 +345,7 @@ getgenv().makewritable = newcclosure(function(tbl)
     return getgenv().setreadonly(tbl, false)
 end)
 
-getgenv().getscriptfunction = (function(script)
+getgenv().getscriptfunction = newcclosure(function(script)
     local success, result = pcall(function()
         return getrenv().require(script)
     end)
@@ -408,21 +408,21 @@ end)
 
 getgenv().get_hidden_gui = gethui
 
-getgenv().table.unfrozen = (function()
+getgenv().table.unfrozen = newcclosure(function()
   return true
 end)
 
-getgenv().isreadonly = (function(obj)
+getgenv().isreadonly = newcclosure(function(obj)
   return true
 end)
 
-getgenv().getscriptclosure = (function(s)
+getgenv().getscriptclosure = newcclosure(function(s)
 	return function()
 		return table.clone(require(s))
 	end
 end)
 
-getgenv().getscriptfunction = (functionfunction(s)
+getgenv().getscriptfunction = newcclosure(function(s)
 	return getscriptclosure(s)
 end)
 
@@ -435,7 +435,7 @@ getscriptclosure = getgenv().getscriptclosure
 local oldsetmetatable = setmetatable
 local savedmetatables = {}
 
-getgenv().setmetatable = (function(tbl, metatable)
+getgenv().setmetatable = newcclosure(function(tbl, metatable)
     local success, result = pcall(function()
         local result = oldsetmetatable(tbl, metatable)
     end)
@@ -446,11 +446,11 @@ getgenv().setmetatable = (function(tbl, metatable)
     return tbl
 end)
 
-getgenv().getrawmetatable = (function(tbl)
+getgenv().getrawmetatable = newcclosure(function(tbl)
     return savedmetatables[tbl]
 end)
 
-getgenv().setrawmetatable = (function(tbl, newmetatable)
+getgenv().setrawmetatable = newcclosure(function(tbl, newmetatable)
     local currentmetatable = getgenv().getrawmetatable(tbl)
     table.foreach(newmetatable, function(key, value)
         currentmetatable[key] = value
