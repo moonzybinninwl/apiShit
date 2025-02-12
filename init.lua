@@ -300,7 +300,7 @@ getgenv().getaffiliateid = newcclosure(function()
     return "Stellar"
 end
 
-getgenv().setfflag = newcclosure(function(fn, value)
+getgenv().setfflag = (function(fn, value)
     if not getgenv().ffs then
         getgenv().ffs = {}
     end
@@ -345,7 +345,7 @@ getgenv().makewritable = newcclosure(function(tbl)
     return getgenv().setreadonly(tbl, false)
 end)
 
-getgenv().getscriptfunction = newcclosure(function(script)
+getgenv().getscriptfunction = (function(script)
     local success, result = pcall(function()
         return getrenv().require(script)
     end)
@@ -408,25 +408,25 @@ end)
 
 getgenv().get_hidden_gui = gethui
 
-getgenv().table.unfrozen = newcclosure(function()
+getgenv().table.unfrozen = (function()
   return true
 end)
 
-getgenv().isreadonly = newcclosure(function(obj)
+getgenv().isreadonly = (function(obj)
   return true
 end)
 
-getgenv().getscriptclosure = newcclosure(function(s)
+getgenv().getscriptclosure = (function(s)
 	return function()
 		return table.clone(require(s))
 	end
 end)
 
-getgenv().getscriptfunction = newcclosure(functionfunction(s)
+getgenv().getscriptfunction = (functionfunction(s)
 	return getscriptclosure(s)
 end)
 
-getgenv().get = newcclosure(function(s)
+getgenv().get = (function(s)
 	return getscriptclosure(s)
 end)
 
@@ -435,7 +435,7 @@ getscriptclosure = getgenv().getscriptclosure
 local oldsetmetatable = setmetatable
 local savedmetatables = {}
 
-getgenv().setmetatable = newcclosure(function(tbl, metatable)
+getgenv().setmetatable = (function(tbl, metatable)
     local success, result = pcall(function()
         local result = oldsetmetatable(tbl, metatable)
     end)
@@ -446,11 +446,11 @@ getgenv().setmetatable = newcclosure(function(tbl, metatable)
     return tbl
 end)
 
-getgenv().getrawmetatable = newcclosure(function(tbl)
+getgenv().getrawmetatable = (function(tbl)
     return savedmetatables[tbl]
 end)
 
-getgenv().setrawmetatable = newcclosure(function(tbl, newmetatable)
+getgenv().setrawmetatable = (function(tbl, newmetatable)
     local currentmetatable = getgenv().getrawmetatable(tbl)
     table.foreach(newmetatable, function(key, value)
         currentmetatable[key] = value
