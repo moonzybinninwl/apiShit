@@ -1,5 +1,5 @@
 print("ENV and unc by binninwl, salad and bery/4dsboy16")
-print("Stellar: ENV version 1.2.4.4")
+print("Stellar: ENV version 1.2.4.7")
 print("[LATEST FIX]: hookmetamethod unavailable revert")
 getgenv().IS_STELLAR_LOADED = false
 local oldr = request 
@@ -111,12 +111,17 @@ getgenv().nyx = {
 		return randomString
 	end
 }
+
 getgenv().IS_NYX_ENV = function(SECURE)
 	if (SECURE == "SECURE_ENV") then
 		return true
 	else
 		return false
 	end
+end
+
+getgenv().getaffiliateid = newcclosure(function()
+    return "Stellar"
 end
 
 getgenv().replicatesignal = newcclosure(function(signal, ...)
