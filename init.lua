@@ -122,7 +122,7 @@ end
 
 getgenv().getaffiliateid = newcclosure(function()
     return "Stellar"
-end
+end)
 
 getgenv().replicatesignal = newcclosure(function(signal, ...)
     if typeof(signal) == "RBXScriptSignal" then
