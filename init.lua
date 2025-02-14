@@ -85,7 +85,9 @@ getgenv().fluxus = {
 	end,
 	get_thread_identity = function()
 		return 3
-	end
+	end,
+	request = request,
+	queue_on_teleport = queueonteleport
   }
 
 --====================================================
