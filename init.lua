@@ -1,6 +1,6 @@
 print("ENV and unc by binninwl, salad and bery/4dsboy16")
-print("Stellar: ENV version 1.2.4.7")
-print("[LATEST FIX]: hookmetamethod unavailable revert")
+print("Stellar: ENV version 1.2.5.2")
+print("[LATEST FIX]: saveinstance not having credits")
 getgenv().IS_STELLAR_LOADED = false
 local oldr = request 
 getgenv().request = function(options)
