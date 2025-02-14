@@ -427,7 +427,7 @@ getgenv().hookmetamethod = newcclosure(function(lr, method, newmethod)
     assert(type(method) == "string", "invalid argument #2 to 'hookmetamethod' (string expected, got " .. type(lr) .. ") ", 2)
     assert(type(newmethod) == "function", "invalid argument #3 to 'hookmetamethod' (function expected, got " .. type(lr) .. ") ", 2)
     if method == '__namecall' then
-        return nil
+        -- return nil
     end
     local rawmetatable = getgenv().getrawmetatable(lr) 
     local old = rawmetatable[method]
