@@ -1,0 +1,479 @@
+{
+    "global environment": {
+        "firesignal": {
+            "label": "firesignal(Signal, Args);",
+            "type": "Method",
+            "description": "Fires all the connections connected to the signal Signal with Args.",
+            "insert": "firesignal"
+        },
+        "getsenv": {
+            "label": "getsenv(localscript);",
+            "type": "Method",
+            "description": "Returns the global environment table of LocalScript script.",
+            "insert": "getsenv"
+        },
+        "checkcaller": {
+            "label": "checkcaller();",
+            "type": "Method",
+            "description": "Returns true if the current thread is a EBON thread.\nNote: Checkcaller does NOT check the call stack of the function, if you call a game function then it calls out to checkcaller, the result will be true! Be careful.",
+            "insert": "checkcaller"
+        },
+        "queue_on_teleport": {
+            "label": "queue_on_teleport(code);",
+            "type": "Method",
+            "description": "Executes code after player is teleported.",
+            "insert": "queue_on_teleport"
+        },
+      
+        "gethwid": {
+            "label": "gethwid();",
+            "type": "Method",
+            "description": "Returns the User's HWID, changes between PCs.",
+            "insert": "gethwid"
+        },
+        "message": {
+            "label": "message(text);",
+            "type": "Method",
+            "description": "Creates a message box with parameters text",
+            "insert": "message"
+        },
+        "setfflag": {
+            "label": "setfflag(FFlag, Value);",
+            "type": "Method",
+            "description": "Sets FFlag with Value. Must be run before the game loads, auto execute recommended.",
+            "insert": "setfflag"
+        },
+        "getinstances": {
+            "label": "getinstances();",
+            "type": "Method",
+            "description": "Returns a list of all instances within the game.",
+            "insert": "getinstances"
+        },
+        "getcallingscript": {
+            "label": "checkcaller();",
+            "type": "Method",
+            "description": "Gets the script that is calling this function.",
+            "insert": "getcallingscript"
+        },
+        "firetouchinterest": {
+            "label": "firetouchinterest(Part, ToTouch, Toggle);",
+            "type": "Method",
+            "description": "Fakes a .Touched event to ToTouch with Part.\nThe Toggle argument must be either 0 or 1 (for fire/un-fire).",
+            "insert": "firetouchinterest"
+        },
+        "getrenv": {
+            "label": "getrenv();",
+            "type": "Method",
+            "description": "Returns the global environment for the LocalScript state.",
+            "insert": "getrenv"
+        },
+        "newcclosure": {
+            "label": "newcclosure(lclosure);",
+            "type": "Method",
+            "description": "Takes an lclosure (Lua function) and returns a new cclosure (C function).\nThis is commonly used when setting the metamethods of a Roblox userdata such as game.",
+            "insert": "newcclosure"
+        },
+        "randomstring": {
+            "label": "randomstring(num);",
+            "type": "Method",
+            "description": "Return a random string with num length.",
+            "insert": "randomstring"
+        },
+        "request": {
+            "label": "request(options);",
+            "type": "Method",
+            "description": "Sends a http request with parameters in options.",
+            "insert": "request"
+        },
+        "readfile": {
+            "label": "readfile(file);",
+            "type": "Method",
+            "description": "Returns the content of the file. ",
+            "insert": "readfile"
+        },
+        "loadstring": {
+            "label": "loadstring(chunk, chunk_name);",
+            "type": "Method",
+            "description": "Loads chunk as a Lua function with optional chunk_name and returns it if compilation is successful.\nOtherwise, if an error has occurred during compilation, nil followed by the error message will be returned.",
+            "insert": "loadstring"
+        },
+        "setthreadcontext": {
+            "label": "setthreadcontext(level);",
+            "type": "Method",
+            "description": "Sets the current thread’s context level to level.",
+            "insert": "setthreadcontext"
+        },
+        "getthreadcontext": {
+            "label": "getthreadcontext();",
+            "type": "Method",
+            "description": "Returns the current thread’s security context level.",
+            "insert": "getthreadcontext"
+        },
+        "setthreadidentity": {
+          "label": "setthreadidentity(level);",
+          "type": "Method",
+          "description": "Sets the current thread’s level to level.",
+          "insert": "setthreadidentity"
+      },
+      "getthreadidentity": {
+          "label": "getthreadidentity();",
+          "type": "Method",
+          "description": "Returns the current thread’s security level.",
+          "insert": "getthreadidentity"
+      },
+        "mousescroll": {
+            "label": "mousescroll(px);",
+            "type": "Method",
+            "description": "Scrolls the mouse wheel virtually by px pixels.",
+            "insert": "mousescroll"
+        },
+        "hookfunction": {
+            "label": "hookfunction(old, hook);",
+            "type": "Method",
+            "description": "Hooks function old, replacing it with the function hook.\nThe old function is returned, you must use this function in order to call the original function.",
+            "insert": "hookfunction"
+        },
+        "listfiles": {
+            "label": "listfiles(folder);",
+            "type": "Method",
+            "description": "Returns a table of files in folder.",
+            "insert": "listfiles"
+        },
+        "keyrelease": {
+            "label": "keyrelease();",
+            "type": "Method",
+            "description": "Releases key on the keyboard. You can access the key values from the link below.\n https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes",
+            "insert": "keyrelease"
+        },
+        "keytap": {
+            "label": "keytap(keycode);",
+            "type": "Method",
+            "description": "Simulates a button tap for the specified keycode. Only works when roblox is focused.",
+            "insert": "keytap"
+        },
+        "rconsoleinfo": {
+            "label": "rconsoleinfo(msg);",
+            "type": "Method",
+            "description": "Prints msg into the console, with a info text before it.",
+            "insert": "rconsoleinfo"
+        },
+        "rconsolename": {
+            "label": "rconsolename(title);",
+            "type": "Method",
+            "description": "Sets the currently allocated console title to title.",
+            "insert": "rconsolename"
+        },
+        "getfpscap": {
+            "label": "getfpscap();",
+            "type": "Method",
+            "description": "Returns the fps cap.",
+            "insert": "getfpscap"
+        },
+        "mouse1release": {
+            "label": "mouse1release();",
+            "type": "Method",
+            "description": "Simulates the left mouse button being released. Commonly used after calling mouse1press().",
+            "insert": "mouse1release"
+        },
+        "getnilinstances": {
+            "label": "getnilinstances();",
+            "type": "Method",
+            "description": "Returns all the nil instances in the game.",
+            "insert": "getnilinstances"
+        },
+        "islclosure": {
+            "label": "islclosure(f);",
+            "type": "Method",
+            "description": "Returns true if f is an LClosure. Otherwise returns false.",
+            "insert": "islclosure"
+        },
+        "rconsolewarn": {
+            "label": "rconsolewarn(msg);",
+            "type": "Method",
+            "description": "Prints msg into the console, with a warning text before it.",
+            "insert": "rconsolewarn"
+        },
+        "mouse1click": {
+            "label": "mouse1click();",
+            "type": "Method",
+            "description": "Simulates the left mouse button being clicked one time.",
+            "insert": "mouse1click"
+        },
+        "mouse2press": {
+            "label": "mouse2press();",
+            "type": "Method",
+            "description": "Clicks down on the right mouse button.",
+            "insert": "mouse2press"
+        },
+        "sethiddenproperty": {
+            "label": "sethiddenproperty(Object, Property, Value);",
+            "type": "Method",
+            "description": "Sets the hidden property Property with Value from Object. Errors if the property does not exist.",
+            "insert": "sethiddenproperty"
+        },
+        "saveinstance": {
+            "label": "saveinstance();",
+            "type": "Method",
+            "description": "Saves the game as a roblox studio file, can be found in the workspace folder.",
+            "insert": "saveinstance"
+        },
+        "gethiddenproperty": {
+            "label": "gethiddenproperty(object, property);",
+            "type": "Method",
+            "description": "Returns the hidden property Property from Object. Errors if the property does not exist.",
+            "insert": "gethiddenproperty"
+        },
+        "rconsoleclear": {
+            "label": "rconsoleclear();",
+            "type": "Method",
+            "description": "Clears the console.",
+            "insert": "rconsoleclear"
+        },
+        "getgenv": {
+            "label": "getgenv();",
+            "type": "Method",
+            "description": "Returns the environment that will be applied to each script ran by stellar.",
+            "insert": "getgenv"
+        },
+        "rconsoleprint": {
+            "label": "rconsoleprint();",
+            "type": "Method",
+            "description": "Prints message into the console. Does not supports colors.",
+            "insert": "rconsoleprint"
+        },
+        "rconsoleerr": {
+            "label": "rconsoleerr();",
+            "type": "Method",
+            "description": "Errors message into the console.",
+            "insert": "rconsoleerr"
+        },
+        "getgc": {
+            "label": "getgc();",
+            "type": "Method",
+            "description": "Returns a table containing Lua’s garbage collector.",
+            "insert": "getgc"
+        },
+        "mousemoverel": {
+            "label": "mousemoverel(x, y);",
+            "type": "Method",
+            "description": "Moves the mouse by x and y relative to the mouse’s current position.\nKeep in mind that a positive y value moves the mouse down.",
+            "insert": "mousemoverel"
+        },
+        "iscclosure": {
+            "label": "iscclosure(closure);",
+            "type": "Method",
+            "description": "Returns a boolean that tells you if closure is a C closure (true) or a Lua closure (false)",
+            "insert": "iscclosure"
+        },
+        "keypress": {
+            "label": "keypress(keycode);",
+            "type": "Method",
+            "description": "Continuously presses the key indicated by keycode until keyrelease is called with the same keycode.",
+            "insert": "keypress"
+        },
+        "setfpscap": {
+            "label": "setfpscap();",
+            "type": "Method",
+            "description": "Sets roblox's fps cap.",
+            "insert": "setfpscap"
+        },
+        "mouse1press": {
+            "label": "mouse1press();",
+            "type": "Method",
+            "description": "Simulates a left mouse button press without releasing it.",
+            "insert": "mouse1press"
+        },
+        "isrbxactive": {
+            "label": "isrbxactive();",
+            "type": "Method",
+            "description": "Returns true if roblox is focused, otherwise returns false.",
+            "insert": "isrbxactive"
+        },
+        "setreadonly": {
+            "label": "setreadonly(t, b);",
+            "type": "Method",
+            "description": "Sets t's readonly value to b.",
+            "insert": "setreadonly"
+        },
+        "fireclickdetector": {
+            "label": "fireclickdetector(d);",
+            "type": "Method",
+            "description": "Simulates a click on ClickDetector d.",
+            "insert": "fireclickdetector"
+        },
+        "mouse2release": {
+            "label": "mouse2release();",
+            "type": "Method",
+            "description": "Simulates the right mouse button being released. This is commonly used after calling mouse2press().",
+            "insert": "mouse2release"
+        },
+        "isreadonly": {
+            "label": "isreadonly(t);",
+            "type": "Method",
+            "description": "Returns t's read-only condition.",
+            "insert": "isreadonly"
+        },
+        "mouse2click": {
+            "label": "mouse2click();",
+            "type": "Method",
+            "description": "Simulates the right mouse button being clicked one time.",
+            "insert": "mouse2click"
+        },
+        "writefile": {
+            "label": "writefile(filename, data);",
+            "type": "Method",
+            "description": "Writes data to a file called filename in the workspace folder.\n If the file already exists, the file is overwritten. This function is restricted to the workspace folder.",
+            "insert": "writefile"
+        },
+        "getreg": {
+            "label": "getreg();",
+            "type": "Method",
+            "description": "Returns the Lua registry table.",
+            "insert": "getreg"
+        },
+        "setclipboard": {
+            "label": "setclipboard(data);",
+            "type": "Method",
+            "description": "Copies data to the clipboard.",
+            "insert": "setclipboard"
+        }
+    },
+    "debug_library": {
+        "debug": {
+            "label": "debug",
+            "type": "Class",
+            "description": "Debug Library",
+            "insert": "debug"
+        },
+        "debug.setmetatable": {
+            "label": "debug.setmetatable(val);",
+            "type": "Method",
+            "description": "Retrieve the metatable of value irregardless of value's metatable's __metatable field. Returns nil if it doesn't exist.",
+            "insert": "debug.setmetatable"
+        },
+        "debug.getmetatable": {
+            "label": "debug.getmetatable(val);",
+            "type": "Method",
+            "description": "Retrieve the metatable of value irregardless of value's metatable's __metatable field. Returns nil if it doesn't exist.",
+            "insert": "debug.getmetatable"
+        },
+        "debug.profileend": {
+            "label": "debug.profileend();",
+            "type": "Method",
+            "description": "Stops a profile created with debug.profilebegin.",
+            "insert": "debug.profileend"
+        },
+        "debug.profilebegin": {
+            "label": "debug.profilebegin(label);",
+            "type": "Method",
+            "description": "Starts a profiler under the label label.",
+            "insert": "debug.profilebegin"
+        },
+        "debug.traceback": {
+            "label": "debug.traceback(message, level);",
+            "type": "Method",
+            "description": "Returns a string with a traceback of the call stack at level (stack level 1 if not provided).\nYou can also include a message to append to the start of the traceback with the message argument.",
+            "insert": "debug.traceback"
+        },
+        "debug.getinfo": {
+            "label": "debug.getinfo(f);",
+            "type": "Method",
+            "description": "Returns a table containing the following information about the function:\n + source - The name of the script the function was defined in\n+ what - Where the function originates from (Lua or C/C++)\n+ func - The passed in function\n+ short_src - The name of the script in a format that can be used in error messages\n+ name - The name of the function\n+ nups - The number of upvalues in the function\nAlthough more information is given, that information is pointless since it has the same values for every function.",
+            "insert": "debug.getinfo"
+        }
+    },
+    "drawing_library": {
+        "Drawing.new": {
+            "label": "Drawing.new(type);",
+            "type": "Method",
+            "description": "Creates a new drawing object with type. Returns the object.",
+            "insert": "Drawing.new"
+        } 
+    },
+    "stellar_library": {
+      "stellar.get_player_by_name": {
+          "label": "stellar.get_player_by_name(username);",
+          "type": "Method",
+          "description": "Gets a player by their display name or username.",
+          "insert": "stellar.get_player_by_name"
+      },
+      "stellar.get_hrp": {
+          "label": "stellar.get_hrp(username);",
+          "type": "Method",
+          "description": "Gets the humanoidrootpart of a player.",
+          "insert": "stellar.get_hrp"
+      },
+      "stellar.remote_spy": {
+          "label": "stellar.remote_spy();",
+          "type": "Method",
+          "description": "Runs a remote spy supported by stellar.",
+          "insert": "stellar.remote_spy"
+      },
+      "stellar.teleport": {
+          "label": "stellar.teleport(vector3);",
+          "type": "Method",
+          "description": "Teleports the local player to a position",
+          "insert": "stellar.teleport"
+      },
+      "stellar.is_player_alive": {
+          "label": "stellar.is_player_alive(username);",
+          "type": "Method",
+          "description": "Checks if a player is alive.",
+          "insert": "stellar.is_player_alive"
+      },
+      "stellar.teleport_to_player": {
+          "label": "stellar.teleport_to_player(username);",
+          "type": "Method",
+          "description": "Teleports the local player to the position of the target player.",
+          "insert": "stellar.teleport_to_player"
+      },
+      "stellar.get_distance": {
+          "label": "stellar.get_distance(username);",
+          "type": "Method",
+          "description": "Calculates the distance between two players.",
+          "insert": "stellar.get_distance"
+      },
+      "stellar.enable_internal": {
+          "label": "stellar.enable_internal();",
+          "type": "Method",
+          "description": "Enables stellar's internal UI.",
+          "insert": "stellar.enable_internal"
+      },
+      "stellar.disable_internal": {
+          "label": "stellar.disable_internal();",
+          "type": "Method",
+          "description": "Disables stellar's internal UI.",
+          "insert": "stellar.disable_internal"
+      },
+      "stellar.enable_antilogger": {
+          "label": "stellar.enable_antilogger();",
+          "type": "Method",
+          "description": "Enables stellar's Anti-Ip-Logger",
+          "insert": "stellar.enable_antilogger"
+      },
+      "stellar.disable_antilogger": {
+          "label": "stellar.disable_antilogger();",
+          "type": "Method",
+          "description": "Disables Stellar's Anti-Ip-Logger",
+          "insert": "stellar.disable_antilogger"
+      },
+      "stellar.enable_httpspy": {
+          "label": "stellar.enable_httpspy();",
+          "type": "Method",
+          "description": "Enables Stellar's HTTP Spy",
+          "insert": "stellar.enable_httpspy"
+      },
+      "stellar.disable_httpspy": {
+          "label": "stellar.disable_httpspy();",
+          "type": "Method",
+          "description": "Disables stellar's HTTP Spy",
+          "insert": "stellar.disable_httpspy"
+      },
+      "stellar.dex": {
+          "label": "stellar.dex();",
+          "type": "Method",
+          "description": "Runs dex explorer V4 Dark.",
+          "insert": "stellar.dex"
+      }
+  }
+  }
