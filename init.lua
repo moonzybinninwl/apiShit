@@ -460,7 +460,7 @@ getgenv().getexecutorname = function()
 end
 
 getgenv().identifyexecutor = function()
-	return "Stellar", "2.0"
+	return "Stellar", "2.1"
 end
 
 getgenv().whatexecutor = function()
