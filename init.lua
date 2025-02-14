@@ -155,13 +155,21 @@ local Params = {
     RepoURL = "https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/main/",
     SSI = "saveinstance",
 }
+
 local synsaveinstance = loadstring(game:HttpGet(Params.RepoURL .. Params.SSI .. ".luau", true), Params.SSI)()
 
 getgenv().saveinstance = newcclosure(function(options)
+    options = options or {}
+    assert(type(options) == "table", "invalid argument #1 to 'saveinstance' (table expected, got " .. type(options) .. ") ", 2)
+    print("saveinstance Powered by UniversalSynSaveInstance | AGPL-3.0 license")
     synsaveinstance(options)
 end)
-getgenv().savegame = newcclosure(function()
-    synsaveinstance(game)
+
+getgenv().savegame = newcclosure(function(options)
+    options = options or {}
+    assert(type(options) == "table", "invalid argument #1 to 'saveinstance' (table expected, got " .. type(options) .. ") ", 2)
+    print("savegame Powered by UniversalSynSaveInstance | AGPL-3.0 license")
+    synsaveinstance(options)
 end)
 
 local API: string = "http://api.plusgiant5.com"
