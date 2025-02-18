@@ -1,5 +1,5 @@
 print("ENV and unc by binninwl, salad and bery/4dsboy16")
-print("Stellar: ENV version 1.2.5.2")
+print("Stellar: ENV version 1.2.5.3")
 print("[LATEST FIX]: saveinstance not having credits")
 getgenv().IS_STELLAR_LOADED = false
 local oldr = request 
@@ -96,7 +96,7 @@ getgenv().fluxus = {
 
 -- // credits to cr1tcal3 but modified a little \\ --
 
-local level = 8
+local level = 3
 
 getgenv().setthreadidentity = function(arg)
     if type(arg) == "number" then
