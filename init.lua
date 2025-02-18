@@ -94,6 +94,26 @@ getgenv().fluxus = {
 
 -- bery start
 
+-- // credits to cr1tcal3 but modified a little \\ --
+
+local level = 8
+
+getgenv().setthreadidentity = function(arg)
+    if type(arg) == "number" then
+        level = arg
+    else
+        warn("Invalid argument: Expected a number")
+    end
+end
+
+getgenv().getthreadidentity = function()
+    return level
+end
+
+getgenv().printidentity = function()
+    print("Current identity is: " .. tostring(level))
+end
+
 -- // i hate to add this but more script support \\ --
 getgenv().nyx = {
 	print = function(...)
