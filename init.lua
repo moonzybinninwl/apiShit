@@ -2085,8 +2085,9 @@ getgenv().getscriptclosure = function(module)
     end
 end
 
-print("Added Pro Funcs .")
-if not shared.notified then 
+shared.notificationlibinject = true
+print("Stellar: Functions added.")
+if not shared.notified and shared.notificationlibinject == false then 
 	game:GetService("StarterGui"):SetCore("SendNotification", {
 	    Title = "Stellar Injected",
 	    Text = "thanks bery/4dsboy16 for the funcs!\n discord.gg/XCpMgyA4R3",  -- xeno server: discord.gg/getxeno
@@ -2094,5 +2095,8 @@ if not shared.notified then
 	    Icon = "rbxassetid://127282870620926"  -- Default valid image to test
 	})
     shared.notified = true 
+else
+    local notificationlib = loadstring(game:HttpGet("https://raw.githubusercontent.com/moonzybinninwl/apiShit/main/notificationlib.lua", true))()
+    notificationlib.new("info", "Stellar", "Stellar has injected.")
 end 
 getgenv().IS_Stellar_LOADED = true
