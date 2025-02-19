@@ -1,5 +1,5 @@
 print("ENV and unc by binninwl, salad and bery/4dsboy16")
-print("Stellar: ENV version 1.2.5.3")
+print("Stellar: ENV version 1.2.5.5")
 print("[LATEST FIX]: saveinstance not having credits")
 getgenv().IS_STELLAR_LOADED = false
 local oldr = request 
