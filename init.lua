@@ -442,19 +442,20 @@ getgenv().setrawmetatable = function(tablething, newmetatable)
     return tablething
 end
 
-getgenv().hookmetamethod = newcclosure(function(lr, method, newmethod)
+getgenv().hookmetamethod = function(lr, method, newmethod)
     assert(type(lr) == "table" or type(lr) == "userdata", "invalid argument #1 to 'hookmetamethod' (table or userdata expected, got " .. type(lr) .. ") ", 2)
     assert(type(method) == "string", "invalid argument #2 to 'hookmetamethod' (string expected, got " .. type(lr) .. ") ", 2)
     assert(type(newmethod) == "function", "invalid argument #3 to 'hookmetamethod' (function expected, got " .. type(lr) .. ") ", 2)
     if method == '__namecall' then
-        -- return nil
+        -- it errors when u use __namecall
+        return nil
     end
     local rawmetatable = getgenv().getrawmetatable(lr) 
     local old = rawmetatable[method]
     rawmetatable[method] = newmethod
     setrawmetatable(lr, rawmetatable)
     return old
-end)
+end
 
 getgenv().isnetworkowner = function(part)
     assert(typeof(part) == "Instance", "invalid argument #1 to 'isnetworkowner' (Instance expected, got " .. type(part) .. ") ")
