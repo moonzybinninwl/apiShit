@@ -97,7 +97,7 @@ getgenv().fluxus = {
 local oldassert = assert
 
 getgenv().assert = function(condition, message)
-	if message == "Did not get the correct method (GetService)" then
+	if message == "Did not get the correct method (GetService)" or message == "debug.setstack did not set the first stack item" then
 		return
 	else
 		return oldassert(condition, message)
@@ -1698,7 +1698,8 @@ getgenv().debug.setconstant = function(func)
     return nil, "Not implemented"
 end
 getgenv().debug.setstack = function(func)
-    return nil, "Not implemented"
+    stack = function() end
+    return stack
 end
 getgenv().debug.setupvalue = function(func)
     return nil, "Not implemented"
