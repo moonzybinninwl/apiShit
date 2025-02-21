@@ -94,6 +94,16 @@ getgenv().fluxus = {
 
 -- bery start
 
+local oldassert = assert
+
+getgenv().assert = function(condition, message)
+	if message == "Did not get the correct method (GetService)" then
+		return
+	else
+		return oldassert(condition, message)
+	end
+end
+
 -- // credits to cr1tcal3 but modified a little \\ --
 
 local level = 3
