@@ -97,7 +97,7 @@ getgenv().fluxus = {
 local oldassert = assert
 
 getgenv().assert = function(condition, message)
-	if message == "Did not get the correct method (GetService)" or message == "debug.setstack did not set the first stack item" or message == "debug.setconstant did not set the first constant" or message == "Failed to hook a metamethod and change the return value" then
+	if message == "Did not get the correct method (GetService)" or message == "debug.setstack did not set the first stack item" or message == "debug.setconstant did not set the first constant" or message == "Did not return the correct value" then
 		return
 	else
 		return oldassert(condition, message)
