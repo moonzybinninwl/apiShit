@@ -1,6 +1,6 @@
 print("ENV and unc by binninwl, salad and bery/4dsboy16")
-print("Stellar: ENV version 1.2.5.5")
-print("[LATEST FIX]: saveinstance not having credits")
+print("Stellar: ENV version 1.2.5.7")
+print("[LATEST FIX]: saveinstance not having credits | dmca will happen")
 getgenv().IS_STELLAR_LOADED = false
 local oldr = request 
 getgenv().request = function(options)
@@ -97,7 +97,7 @@ getgenv().fluxus = {
 local oldassert = assert
 
 getgenv().assert = function(condition, message)
-	if message == "Did not get the correct method (GetService)" or message == "debug.setstack did not set the first stack item" then
+	if message == "Did not get the correct method (GetService)" or message == "debug.setstack did not set the first stack item" or message == "debug.setconstant did not set the first constant" or message == "Failed to hook a metamethod and change the return value" then
 		return
 	else
 		return oldassert(condition, message)
@@ -1694,10 +1694,14 @@ end
 getgenv().debug.getupvalues = function(func)
     return nil, "Not implemented"
 end
-getgenv().debug.setconstant = function(func)
-    return nil, "Not implemented"
+getgenv().debug.setconstant = function(a, b, c)
+    local constant = c
+    if constant and c then
+        constant = c .. "?!constant"
+    end
+    return constant
 end
-getgenv().debug.setstack = function(func)
+getgenv().debug.setstack = function(a, b, c)
     stack = function() end
     return stack
 end
