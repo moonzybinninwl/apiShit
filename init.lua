@@ -1,6 +1,6 @@
 print("ENV and unc by binninwl, salad and bery/4dsboy16")
-print("Stellar: ENV version 1.2.5.7")
-print("[LATEST FIX]: saveinstance not having credits | dmca will happen")
+print("Stellar: ENV version 1.2.7.2")
+print("[LATEST FIX]: saveinstance not having credits | dmca will happen")f
 getgenv().IS_STELLAR_LOADED = false
 local oldr = request 
 getgenv().request = function(options)
@@ -513,7 +513,7 @@ getgenv().hookmetamethod = function(lr, method, newmethod)
     return old
 end
 
-getgenv().hookmetamethod = function(object, method, func)
+getgenv().safehookmetamethod = function(object, method, func)
     assert(type(object) == "table" or type(object) == "userdata", "invalid argument #1 to 'safehookmetamethod' (table or userdata expected, got " .. type(object) .. ") ", 2)
     assert(type(method) == "string", "invalid argument #2 to 'safehookmetamethod' (string expected, got " .. type(method) .. ") ", 2)
     assert(type(func) == "function", "invalid argument #3 to 'safehookmetamethod' (function expected, got " .. type(func) .. ") ", 2)
