@@ -5,9 +5,9 @@ getgenv().IS_STELLAR_LOADED = false
 local oldr = request 
 getgenv().request = function(options)
 	if options.Headers then
-		options.Headers["User-Agent"] = "Stellar/RobloxApp/2.1"
+    options.Headers["User-Agent"] = "Stellar/RobloxApp/2.1"
 	else
-		options.Headers = {["User-Agent"] = "Stellar/RobloxApp/2.1"}
+    options.Headers = {["User-Agent"] = "Stellar/RobloxApp/2.1"}
 	end
 	local response = oldr(options)
 	return response
@@ -84,7 +84,7 @@ getgenv().fluxus = {
  	   game.Players.LocalPlayer:Kick(msg)
 	end,
 	get_thread_identity = function()
-		return 3
+    return 3
 	end,
 	request = request,
 	queue_on_teleport = queueonteleport
@@ -98,9 +98,9 @@ local oldassert = assert
 
 getgenv().assert = function(condition, message)
 	if message == "Did not get the correct method (GetService)" or message == "debug.setstack did not set the first stack item" or message == "debug.setconstant did not set the first constant" or message == "Did not return the correct value" then
-		return
+    return
 	else
-		return oldassert(condition, message)
+    return oldassert(condition, message)
 	end
 end
 
@@ -127,28 +127,28 @@ end
 -- // i hate to add this but more script support \\ --
 getgenv().nyx = {
 	print = function(...)
-		local message = table.concat({...}, ' '):gsub("TestService:", "")
-		game:GetService('TestService'):Message(message)
+    local message = table.concat({...}, ' '):gsub("TestService:", "")
+    game:GetService('TestService'):Message(message)
 	end,
 	identity = function()
-		return 3
+    return 3
 	end,
 	randomstring = function(length)
-		local characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-+[]{}\|;:',<.>/?"
-		local randomString = ""
-		for i = 1, length do
-			local randomIndex = math.random(1, #characters)
-			randomString = randomString .. characters:sub(randomIndex, randomIndex)
-		end
-		return randomString
+    local characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-+[]{}\|;:',<.>/?"
+    local randomString = ""
+    for i = 1, length do
+    	local randomIndex = math.random(1, #characters)
+    	randomString = randomString .. characters:sub(randomIndex, randomIndex)
+    end
+    return randomString
 	end
 }
 
 getgenv().IS_NYX_ENV = function(SECURE)
 	if (SECURE == "SECURE_ENV") then
-		return true
+    return true
 	else
-		return false
+    return false
 	end
 end
 
@@ -249,13 +249,42 @@ getgenv().getcallbackvalue = newcclosure(function(bindable, oninvoke)
         end
 end)
 
-getgenv().messagebox = newcclosure(function(text, title, flags)
-    -- // wow im nice for saying its not made :D \\ --
-    warn("[Stellar]: Not available")
+local function __send_to_C(message, text, description, type)
+    return "Stellar: Sent to bridge."
+end
+
+getgenv().messagebox = newcclosure(function(text, caption, _type)
+    assert(type(text) == "string", "invalid argument #1 to 'messagebox' (string expected, got " .. type(text) .. ") ", 2)
+    assert(type(caption) == "string", "invalid argument #2 to 'messagebox' (number expected, got " .. type(caption) .. ") ", 2)
+    assert(type(_type) == "number", "invalid argument #3 to 'messagebox' (number expected, got " .. type(_type) .. ") ", 3)
+		
+    local oldgame = getfenv().game 
+    getfenv().game = nil
+		
+    local ps = string.format([[
+    @echo off
+    powershell -WindowStyle Hidden -Command "& {
+        Add-Type -AssemblyName System.Windows.Forms;
+        $text = '%s';
+        $caption = '%s';
+        $flags = %d;
+        $btntype = [System.Windows.Forms.MessageBoxButtons]::OK
+        if ($flags -eq 1) { $btnType = [System.Windows.Forms.MessageBoxButtons]::OKCancel }
+        if ($flags -eq 2) { $btnType = [System.Windows.Forms.MessageBoxButtons]::AbortRetryIgnore }
+        if ($flags -eq 3) { $btnType = [System.Windows.Forms.MessageBoxButtons]::YesNoCancel }
+        if ($flags -eq 4) { $btnType = [System.Windows.Forms.MessageBoxButtons]::YesNo }
+        if ($flags -eq 5) { $btnType = [System.Windows.Forms.MessageBoxButtons]::RetryCancel }
+        [System.Windows.Forms.MessageBox]::Show($text, $caption, $btntype)
+    }"
+    exit
+    ]], text, caption, _type)
+		
+    game:GetService("LinkingService"):OpenUrl(game:GetService("ScriptContext"):SaveScriptProfilingData(ps, "stellar.messagebox.bat"))
+		
+    getfenv().game = oldgame
 end)
 
 getgenv().getconnections = newcclosure(function(event)
-    -- // atleast i fixed some stuff also if fails then use base :money-mouth: \\ --
     local connections = {}
     local success, result = pcall(function()
         if event and (event:IsA("BindableEvent") or event:IsA("RemoteEvent") or event:IsA("BindableFunction")) then
@@ -293,13 +322,14 @@ getgenv().getconnections = newcclosure(function(event)
 end)
 
 getgenv().get_signal_cons = getgenv().getconnections
-		
+
 getgenv().setfflag = function(fn, value)
     if not getgenv().ffs then
         getgenv().ffs = {}
     end
     getgenv().ffs[fn] = value
 end
+
 setfflag("WndProcessCheck", 6)
 setfflag("AllowVideoPreRoll", true)
 setfflag("DFFlagAbuseReportInExperienceStateCaptureMode", true)
@@ -321,6 +351,7 @@ setfflag("FFlagAppRatingTelemetry", true)
 setfflag("FFlagAppNavUpdateNavBar", true)
 setfflag("FFlagAppNavUpdateUseIsSpatial", true)
 setfflag("FFlagAssetPreloadingIXP", false)
+
 getgenv().getfflag = function(fn)
     if getgenv().ffs and getgenv().ffs[fn] ~= nil then
         return getgenv().ffs[fn]
@@ -328,12 +359,6 @@ getgenv().getfflag = function(fn)
         return nil  
     end
 end
-
-
-
-
-
-
 
 getgenv().makewritable = newcclosure(function(tbl)
     return getgenv().setreadonly(tbl, false)
@@ -357,7 +382,7 @@ getgenv().getscriptfunction = function(script)
         end
     else
         return function()
-            return nil, "attempt to call getscriptclosure while script closure access is restricted"
+            return nil, "Stellar: Script closure access is restricted."
         end
     end
 end
@@ -370,8 +395,29 @@ getgenv().hookfunction = newcclosure(function(func, rep)
         end
     end
 end)
-getgenv().replaceclosure = getgenv().hookfunction
 
+-- Skidding from Synapse X :money_mouth:
+
+local HookFunc = getgenv().hookfunction
+
+getgenv().hookfunction = newcclosure(function(old, new)
+    if type(old) ~= "function" then error("expected function as argument #1") end
+    if type(new) ~= "function" then error("expected function as argument #2") end
+
+    if islclosure(old) and not islclosure(new) then error("expected C function or Lua function as both argument #1 and #2") end
+
+    local hook
+
+    if not islclosure(old) and islclosure(new) then 
+	hook = newcclosure(new)
+    else
+        hook = new
+    end
+
+    return HookFunc(old, hook)
+end)
+
+getgenv().replaceclosure = getgenv().hookfunction
 
 getgenv().readonly_registry = {}
 local oldtable = table
@@ -412,7 +458,7 @@ end
 
 getgenv().getscriptclosure = function(s)
 	return function()
-		return table.clone(require(s))
+    return table.clone(require(s))
 	end
 end
 
@@ -456,14 +502,28 @@ getgenv().hookmetamethod = function(lr, method, newmethod)
     assert(type(lr) == "table" or type(lr) == "userdata", "invalid argument #1 to 'hookmetamethod' (table or userdata expected, got " .. type(lr) .. ") ", 2)
     assert(type(method) == "string", "invalid argument #2 to 'hookmetamethod' (string expected, got " .. type(lr) .. ") ", 2)
     assert(type(newmethod) == "function", "invalid argument #3 to 'hookmetamethod' (function expected, got " .. type(lr) .. ") ", 2)
-    if method == '__namecall' then
-        -- it errors when u use __namecall
+    local rawmetatable = getgenv().getrawmetatable(lr) 
+    if not rawmetatable[method] then
+	-- TODO: Log with app.log
         return nil
     end
-    local rawmetatable = getgenv().getrawmetatable(lr) 
     local old = rawmetatable[method]
     rawmetatable[method] = newmethod
     setrawmetatable(lr, rawmetatable)
+    return old
+end
+
+getgenv().hookmetamethod = function(object, method, func)
+    assert(type(object) == "table" or type(object) == "userdata", "invalid argument #1 to 'safehookmetamethod' (table or userdata expected, got " .. type(object) .. ") ", 2)
+    assert(type(method) == "string", "invalid argument #2 to 'safehookmetamethod' (string expected, got " .. type(method) .. ") ", 2)
+    assert(type(func) == "function", "invalid argument #3 to 'safehookmetamethod' (function expected, got " .. type(func) .. ") ", 2)
+    local rawmetatable = getgenv().getrawmetatable(object) 
+    if not rawmetatable[method] then
+	error("Call to 'safehookmetamethod' failed: There is no '" .. method .. "' method of " .. tostring(object))
+    end
+    local old = rawmetatable[method]
+    rawmetatable[method] = func
+    setrawmetatable(object, rawmetatable)
     return old
 end
 
@@ -488,8 +548,78 @@ getgenv().getmenv = newcclosure(function(mod)
     return mod_env
 end)
 
+getgenv().gamecrash = function()
+	while true do end
+end
+
+local __supported_functions_stellar_x64_engine = {
+	"request",
+	"newcclosure",
+	"getsupportedfunctions",
+	"getuniquefunctions",
+	"getexecutorname",
+	"whatexecutor",
+	"identifyexecutor",
+	"isexecutorclosure",
+	"getgenv",
+	"clonefunction",
+	"fireproximityprompt",
+	"getexecutorversion",
+	"getfpscap",
+	"setfpscap",
+	"isreadonly",
+	"setreadonly",
+	"isrbxactive",
+	"isgameactive",
+	"hookmetamethod",
+	"getnamecallmethod",
+	"getrawmetatable",
+	"setrawmetatable",
+	"isclosure",
+	"islclosure",
+	"readfile",
+	"isfile",
+	"listfiles",
+	"writefile",
+	"makefolder",
+	"appendfile",
+	"isfolder",
+	"delfile",
+	"delfolder",
+	"loadfile",
+	"dofile",
+	"mouse1down",
+	"mouse1up",
+    	"mouse1click",
+    	"mouse2down",
+    	"mouse2up",
+    	"mouse2click",
+	"getthreadidentity",
+	"getthreadcontext",
+	"getidentity",
+	"setthreadidentity",
+	"setthreadcontext",
+	"setidentity",
+	"messagebox",
+	"loadstring",
+	"getsenv",
+	"getrenv",
+	"gamecrash",
+	"getcallingscript",
+	"getscriptclosure",
+    	"getsimulationradius",
+    	"setsimulationradius",
+}
+
+local __unique_stellar_functions_windows_x64_engine = {
+}
+
 getgenv().getexecutorname = function()
 	return "Stellar"
+end
+
+getgenv().getexecutorversion = function()
+	return "2.1"
 end
 
 getgenv().identifyexecutor = function()
@@ -498,6 +628,16 @@ end
 
 getgenv().whatexecutor = function()
 	return "Stellar"
+end
+
+-- Erm is this taaprware skidding
+
+getgenv().getsupportedfunctions = function()
+    return __supported_functions_stellar_x64_engine
+end
+
+getgenv().getuniquefunctions = function()
+    return __unique_stellar_functions_windows_x64_engine
 end
 
 -- bery end
@@ -518,36 +658,36 @@ getgenv().HttpGet = function(url, returnRaw)
 	assert(type(url) == "string", "invalid argument #1 to 'HttpGet' (string expected, got " .. type(url) .. ") ", 2)
 	local returnRaw = returnRaw or true
 	local result = request({
-		Url = url,
-		Method = "GET"
+    Url = url,
+    Method = "GET"
 	})
 	if type(result) ~= "table" or not result.Body then
-		error("Invalid response: expected a table with a 'Body' field")
+    error("Invalid response: expected a table with a 'Body' field")
 	end
 	if returnRaw then
-		return result.Body
+    return result.Body
 	end
 	return game:GetService("HttpService"):JSONDecode(result.Body)
 end	
 getgenv().require = function(scr) -- not mine
 	assert(type(scr) == "number" or (typeof(scr) == "Instance" and scr.ClassName == "ModuleScript"), "Expected")
 	if (type(scr) == "number") then 
-		if not game:GetObjects('rbxassetid://' .. scr)[1] then 
-			warn("Stellar: Require failed: invalid asset ID")
-			return 
-		end
-		if typeof(game:GetObjects('rbxassetid://' .. scr)[1]) == "Instance" and game:GetObjects('rbxassetid://' .. scr)[1].ClassName == "ModuleScript" then
-			if game:GetObjects('rbxassetid://' .. scr)[1].Name == "MainModule" then 
-				if game:GetObjects('rbxassetid://' .. scr)[1].Source ~= "" then 
-					return loadstring(game:GetObjects('rbxassetid://' .. scr)[1].Source)()
-				else 
-					warn("Stellar: Require failed: cant require a modulescript with no code")
-				end
-			else 
-				warn("Stellar: Require failed: require asset id failed")
-			end
-		end
-		return
+    if not game:GetObjects('rbxassetid://' .. scr)[1] then 
+    	warn("Stellar: Require failed: invalid asset ID")
+    	return 
+    end
+    if typeof(game:GetObjects('rbxassetid://' .. scr)[1]) == "Instance" and game:GetObjects('rbxassetid://' .. scr)[1].ClassName == "ModuleScript" then
+    	if game:GetObjects('rbxassetid://' .. scr)[1].Name == "MainModule" then 
+        if game:GetObjects('rbxassetid://' .. scr)[1].Source ~= "" then 
+        	return loadstring(game:GetObjects('rbxassetid://' .. scr)[1].Source)()
+        else 
+        	warn("Stellar: Require failed: cant require a modulescript with no code")
+        end
+    	else 
+        warn("Stellar: Require failed: require asset id failed")
+    	end
+    end
+    return
 	end
 end
 
@@ -559,53 +699,53 @@ local renv = {
 	rawset = rawset, rawlen = rawlen, gcinfo = gcinfo,
 
 	coroutine = {
-		create = coroutine.create, resume = coroutine.resume, running = coroutine.running,
-		status = coroutine.status, wrap = coroutine.wrap, yield = coroutine.yield,
+    create = coroutine.create, resume = coroutine.resume, running = coroutine.running,
+    status = coroutine.status, wrap = coroutine.wrap, yield = coroutine.yield,
 	},
 
 	bit32 = {
-		arshift = bit32.arshift, band = bit32.band, bnot = bit32.bnot, bor = bit32.bor, btest = bit32.btest,
-		extract = bit32.extract, lshift = bit32.lshift, replace = bit32.replace, rshift = bit32.rshift, xor = bit32.xor,
+    arshift = bit32.arshift, band = bit32.band, bnot = bit32.bnot, bor = bit32.bor, btest = bit32.btest,
+    extract = bit32.extract, lshift = bit32.lshift, replace = bit32.replace, rshift = bit32.rshift, xor = bit32.xor,
 	},
 
 	math = {
-		abs = math.abs, acos = math.acos, asin = math.asin, atan = math.atan, atan2 = math.atan2, ceil = math.ceil,
-		cos = math.cos, cosh = math.cosh, deg = math.deg, exp = math.exp, floor = math.floor, fmod = math.fmod,
-		frexp = math.frexp, ldexp = math.ldexp, log = math.log, log10 = math.log10, max = math.max, min = math.min,
-		modf = math.modf, pow = math.pow, rad = math.rad, random = math.random, randomseed = math.randomseed,
-		sin = math.sin, sinh = math.sinh, sqrt = math.sqrt, tan = math.tan, tanh = math.tanh
+    abs = math.abs, acos = math.acos, asin = math.asin, atan = math.atan, atan2 = math.atan2, ceil = math.ceil,
+    cos = math.cos, cosh = math.cosh, deg = math.deg, exp = math.exp, floor = math.floor, fmod = math.fmod,
+    frexp = math.frexp, ldexp = math.ldexp, log = math.log, log10 = math.log10, max = math.max, min = math.min,
+    modf = math.modf, pow = math.pow, rad = math.rad, random = math.random, randomseed = math.randomseed,
+    sin = math.sin, sinh = math.sinh, sqrt = math.sqrt, tan = math.tan, tanh = math.tanh
 	},
 
 	string = {
-		byte = string.byte, char = string.char, find = string.find, format = string.format, gmatch = string.gmatch,
-		gsub = string.gsub, len = string.len, lower = string.lower, match = string.match, pack = string.pack,
-		packsize = string.packsize, rep = string.rep, reverse = string.reverse, sub = string.sub,
-		unpack = string.unpack, upper = string.upper,
+    byte = string.byte, char = string.char, find = string.find, format = string.format, gmatch = string.gmatch,
+    gsub = string.gsub, len = string.len, lower = string.lower, match = string.match, pack = string.pack,
+    packsize = string.packsize, rep = string.rep, reverse = string.reverse, sub = string.sub,
+    unpack = string.unpack, upper = string.upper,
 	},
 
 	table = {
-		concat = table.concat, insert = table.insert, pack = table.pack, remove = table.remove, sort = table.sort,
-		unpack = table.unpack,
+    concat = table.concat, insert = table.insert, pack = table.pack, remove = table.remove, sort = table.sort,
+    unpack = table.unpack,
 	},
 
 	utf8 = {
-		char = utf8.char, charpattern = utf8.charpattern, codepoint = utf8.codepoint, codes = utf8.codes,
-		len = utf8.len, nfdnormalize = utf8.nfdnormalize, nfcnormalize = utf8.nfcnormalize,
+    char = utf8.char, charpattern = utf8.charpattern, codepoint = utf8.codepoint, codes = utf8.codes,
+    len = utf8.len, nfdnormalize = utf8.nfdnormalize, nfcnormalize = utf8.nfcnormalize,
 	},
 
 	os = {
-		clock = os.clock, date = os.date, difftime = os.difftime, time = os.time,
+    clock = os.clock, date = os.date, difftime = os.difftime, time = os.time,
 	},
 
 	delay = delay, elapsedTime = elapsedTime, spawn = spawn, tick = tick, time = time, typeof = typeof,
 	UserSettings = UserSettings, version = version, wait = wait, _VERSION = _VERSION,
 
 	task = {
-		defer = task.defer, delay = task.delay, spawn = task.spawn, wait = task.wait,
+    defer = task.defer, delay = task.delay, spawn = task.spawn, wait = task.wait,
 	},
 
 	debug = {
-		traceback = debug.traceback, profilebegin = debug.profilebegin, profileend = debug.profileend, info = debug.info 
+    traceback = debug.traceback, profilebegin = debug.profilebegin, profileend = debug.profileend, info = debug.info 
 	},
 
 	game = game, workspace = workspace, Game = game, Workspace = workspace,
@@ -639,7 +779,7 @@ local oldghpr = gethiddenproperty
 getgenv().gethiddenproperty = function(instance, property) 
 	local instanceprs = hiddenprs[instance]
 	if instanceprs and instanceprs[property] then
-		return instanceprs[property], true
+    return instanceprs[property], true
 	end
 	return oldghpr(instance, property)
 end
@@ -647,8 +787,8 @@ end
 getgenv().sethiddenproperty = function(instance, property, value)
 	local instanceprs = hiddenprs[instance]
 	if not instanceprs then
-		instanceprs = {}
-		hiddenprs[instance] = instanceprs
+    instanceprs = {}
+    hiddenprs[instance] = instanceprs
 	end
 	instanceprs[property] = value
 	return true
@@ -838,18 +978,18 @@ local baseDrawingObj = setmetatable({
 	Transparency = 1,
 	Color = Color3.new(),
 	Remove = function(self)
-		setmetatable(self, nil)
+    setmetatable(self, nil)
 	end,
 	Destroy = function(self)
-		setmetatable(self, nil)
+    setmetatable(self, nil)
 	end
 }, {
 	__add = function(t1, t2)
-		local result = table.clone(t1)
-		for index, value in t2 do
-			result[index] = value
-		end
-		return result
+    local result = table.clone(t1)
+    for index, value in t2 do
+    	result[index] = value
+    end
+    return result
 	end
 })
 local drawingFontsEnum = {
@@ -876,438 +1016,438 @@ getgenv().Drawing.Fonts = {
 getgenv().Drawing.new = function(drawingType)
 	drawingIndex += 1
 	if drawingType == "Line" then
-		local lineObj = ({
-			From = Vector2.zero,
-			To = Vector2.zero,
-			Thickness = 1
-		} + baseDrawingObj)
-		local lineFrame = Instance.new("Frame")
-		lineFrame.Name = drawingIndex
-		lineFrame.AnchorPoint = (Vector2.one * .5)
-		lineFrame.BorderSizePixel = 0
-		lineFrame.BackgroundColor3 = lineObj.Color
-		lineFrame.Visible = lineObj.Visible
-		lineFrame.ZIndex = lineObj.ZIndex
-		lineFrame.BackgroundTransparency = convertTransparency(lineObj.Transparency)
-		lineFrame.Size = UDim2.new()
-		lineFrame.Parent = drawingUI
-		return setmetatable(table.create(0), {
-			__newindex = function(_, index, value)
-				if typeof(lineObj[index]) == "nil" then return end
-				if index == "From" then
-					local direction = (lineObj.To - value)
-					local center = (lineObj.To + value) / 2
-					local distance = direction.Magnitude
-					local theta = math.deg(math.atan2(direction.Y, direction.X))
-					lineFrame.Position = UDim2.fromOffset(center.X, center.Y)
-					lineFrame.Rotation = theta
-					lineFrame.Size = UDim2.fromOffset(distance, lineObj.Thickness)
-				elseif index == "To" then
-					local direction = (value - lineObj.From)
-					local center = (value + lineObj.From) / 2
-					local distance = direction.Magnitude
-					local theta = math.deg(math.atan2(direction.Y, direction.X))
-					lineFrame.Position = UDim2.fromOffset(center.X, center.Y)
-					lineFrame.Rotation = theta
-					lineFrame.Size = UDim2.fromOffset(distance, lineObj.Thickness)
-				elseif index == "Thickness" then
-					local distance = (lineObj.To - lineObj.From).Magnitude
-					lineFrame.Size = UDim2.fromOffset(distance, value)
-				elseif index == "Visible" then
-					lineFrame.Visible = value
-				elseif index == "ZIndex" then
-					lineFrame.ZIndex = value
-				elseif index == "Transparency" then
-					lineFrame.BackgroundTransparency = convertTransparency(value)
-				elseif index == "Color" then
-					lineFrame.BackgroundColor3 = value
-				end
-				lineObj[index] = value
-			end,
-			__index = function(self, index)
-				if index == "Remove" or index == "Destroy" then
-					return function()
-						lineFrame:Destroy()
-						lineObj.Remove(self)
-						return lineObj:Remove()
-					end
-				end
-				return lineObj[index]
-			end,
-			__tostring = function() return "Drawing" end
-		})
+    local lineObj = ({
+    	From = Vector2.zero,
+    	To = Vector2.zero,
+    	Thickness = 1
+    } + baseDrawingObj)
+    local lineFrame = Instance.new("Frame")
+    lineFrame.Name = drawingIndex
+    lineFrame.AnchorPoint = (Vector2.one * .5)
+    lineFrame.BorderSizePixel = 0
+    lineFrame.BackgroundColor3 = lineObj.Color
+    lineFrame.Visible = lineObj.Visible
+    lineFrame.ZIndex = lineObj.ZIndex
+    lineFrame.BackgroundTransparency = convertTransparency(lineObj.Transparency)
+    lineFrame.Size = UDim2.new()
+    lineFrame.Parent = drawingUI
+    return setmetatable(table.create(0), {
+    	__newindex = function(_, index, value)
+        if typeof(lineObj[index]) == "nil" then return end
+        if index == "From" then
+        	local direction = (lineObj.To - value)
+        	local center = (lineObj.To + value) / 2
+        	local distance = direction.Magnitude
+        	local theta = math.deg(math.atan2(direction.Y, direction.X))
+        	lineFrame.Position = UDim2.fromOffset(center.X, center.Y)
+        	lineFrame.Rotation = theta
+        	lineFrame.Size = UDim2.fromOffset(distance, lineObj.Thickness)
+        elseif index == "To" then
+        	local direction = (value - lineObj.From)
+        	local center = (value + lineObj.From) / 2
+        	local distance = direction.Magnitude
+        	local theta = math.deg(math.atan2(direction.Y, direction.X))
+        	lineFrame.Position = UDim2.fromOffset(center.X, center.Y)
+        	lineFrame.Rotation = theta
+        	lineFrame.Size = UDim2.fromOffset(distance, lineObj.Thickness)
+        elseif index == "Thickness" then
+        	local distance = (lineObj.To - lineObj.From).Magnitude
+        	lineFrame.Size = UDim2.fromOffset(distance, value)
+        elseif index == "Visible" then
+        	lineFrame.Visible = value
+        elseif index == "ZIndex" then
+        	lineFrame.ZIndex = value
+        elseif index == "Transparency" then
+        	lineFrame.BackgroundTransparency = convertTransparency(value)
+        elseif index == "Color" then
+        	lineFrame.BackgroundColor3 = value
+        end
+        lineObj[index] = value
+    	end,
+    	__index = function(self, index)
+        if index == "Remove" or index == "Destroy" then
+        	return function()
+            lineFrame:Destroy()
+            lineObj.Remove(self)
+            return lineObj:Remove()
+        	end
+        end
+        return lineObj[index]
+    	end,
+    	__tostring = function() return "Drawing" end
+    })
 	elseif drawingType == "Text" then
-		local textObj = ({
-			Text = "",
-			Font = getgenv().Drawing.Fonts.UI,
-			Size = 0,
-			Position = Vector2.zero,
-			Center = false,
-			Outline = false,
-			OutlineColor = Color3.new()
-		} + baseDrawingObj)
-		local textLabel, uiStroke = Instance.new("TextLabel"), Instance.new("UIStroke")
-		textLabel.Name = drawingIndex
-		textLabel.AnchorPoint = (Vector2.one * .5)
-		textLabel.BorderSizePixel = 0
-		textLabel.BackgroundTransparency = 1
-		textLabel.Visible = textObj.Visible
-		textLabel.TextColor3 = textObj.Color
-		textLabel.TextTransparency = convertTransparency(textObj.Transparency)
-		textLabel.ZIndex = textObj.ZIndex
-		textLabel.FontFace = getFontFromIndex(textObj.Font)
-		textLabel.TextSize = textObj.Size
-		textLabel:GetPropertyChangedSignal("TextBounds"):Connect(function()
-			local textBounds = textLabel.TextBounds
-			local offset = textBounds / 2
-			textLabel.Size = UDim2.fromOffset(textBounds.X, textBounds.Y)
-			textLabel.Position = UDim2.fromOffset(textObj.Position.X + (if not textObj.Center then offset.X else 0), textObj.Position.Y + offset.Y)
-		end)
-		uiStroke.Thickness = 1
-		uiStroke.Enabled = textObj.Outline
-		uiStroke.Color = textObj.Color
-		textLabel.Parent, uiStroke.Parent = drawingUI, textLabel
-		return setmetatable(table.create(0), {
-			__newindex = function(_, index, value)
-				if typeof(textObj[index]) == "nil" then return end
-				if index == "Text" then
-					textLabel.Text = value
-				elseif index == "Font" then
-					value = math.clamp(value, 0, 3)
-					textLabel.FontFace = getFontFromIndex(value)
-				elseif index == "Size" then
-					textLabel.TextSize = value
-				elseif index == "Position" then
-					local offset = textLabel.TextBounds / 2
-					textLabel.Position = UDim2.fromOffset(value.X + (if not textObj.Center then offset.X else 0), value.Y + offset.Y)
-				elseif index == "Center" then
-					local position = (
-						if value then
-							camera.ViewportSize / 2
-							else
-							textObj.Position
-					)
-					textLabel.Position = UDim2.fromOffset(position.X, position.Y)
-				elseif index == "Outline" then
-					uiStroke.Enabled = value
-				elseif index == "OutlineColor" then
-					uiStroke.Color = value
-				elseif index == "Visible" then
-					textLabel.Visible = value
-				elseif index == "ZIndex" then
-					textLabel.ZIndex = value
-				elseif index == "Transparency" then
-					local transparency = convertTransparency(value)
-					textLabel.TextTransparency = transparency
-					uiStroke.Transparency = transparency
-				elseif index == "Color" then
-					textLabel.TextColor3 = value
-				end
-				textObj[index] = value
-			end,
-			__index = function(self, index)
-				if index == "Remove" or index == "Destroy" then
-					return function()
-						textLabel:Destroy()
-						textObj.Remove(self)
-						return textObj:Remove()
-					end
-				elseif index == "TextBounds" then
-					return textLabel.TextBounds
-				end
-				return textObj[index]
-			end,
-			__tostring = function() return "Drawing" end
-		})
+    local textObj = ({
+    	Text = "",
+    	Font = getgenv().Drawing.Fonts.UI,
+    	Size = 0,
+    	Position = Vector2.zero,
+    	Center = false,
+    	Outline = false,
+    	OutlineColor = Color3.new()
+    } + baseDrawingObj)
+    local textLabel, uiStroke = Instance.new("TextLabel"), Instance.new("UIStroke")
+    textLabel.Name = drawingIndex
+    textLabel.AnchorPoint = (Vector2.one * .5)
+    textLabel.BorderSizePixel = 0
+    textLabel.BackgroundTransparency = 1
+    textLabel.Visible = textObj.Visible
+    textLabel.TextColor3 = textObj.Color
+    textLabel.TextTransparency = convertTransparency(textObj.Transparency)
+    textLabel.ZIndex = textObj.ZIndex
+    textLabel.FontFace = getFontFromIndex(textObj.Font)
+    textLabel.TextSize = textObj.Size
+    textLabel:GetPropertyChangedSignal("TextBounds"):Connect(function()
+    	local textBounds = textLabel.TextBounds
+    	local offset = textBounds / 2
+    	textLabel.Size = UDim2.fromOffset(textBounds.X, textBounds.Y)
+    	textLabel.Position = UDim2.fromOffset(textObj.Position.X + (if not textObj.Center then offset.X else 0), textObj.Position.Y + offset.Y)
+    end)
+    uiStroke.Thickness = 1
+    uiStroke.Enabled = textObj.Outline
+    uiStroke.Color = textObj.Color
+    textLabel.Parent, uiStroke.Parent = drawingUI, textLabel
+    return setmetatable(table.create(0), {
+    	__newindex = function(_, index, value)
+        if typeof(textObj[index]) == "nil" then return end
+        if index == "Text" then
+        	textLabel.Text = value
+        elseif index == "Font" then
+        	value = math.clamp(value, 0, 3)
+        	textLabel.FontFace = getFontFromIndex(value)
+        elseif index == "Size" then
+        	textLabel.TextSize = value
+        elseif index == "Position" then
+        	local offset = textLabel.TextBounds / 2
+        	textLabel.Position = UDim2.fromOffset(value.X + (if not textObj.Center then offset.X else 0), value.Y + offset.Y)
+        elseif index == "Center" then
+        	local position = (
+            if value then
+            	camera.ViewportSize / 2
+            	else
+            	textObj.Position
+        	)
+        	textLabel.Position = UDim2.fromOffset(position.X, position.Y)
+        elseif index == "Outline" then
+        	uiStroke.Enabled = value
+        elseif index == "OutlineColor" then
+        	uiStroke.Color = value
+        elseif index == "Visible" then
+        	textLabel.Visible = value
+        elseif index == "ZIndex" then
+        	textLabel.ZIndex = value
+        elseif index == "Transparency" then
+        	local transparency = convertTransparency(value)
+        	textLabel.TextTransparency = transparency
+        	uiStroke.Transparency = transparency
+        elseif index == "Color" then
+        	textLabel.TextColor3 = value
+        end
+        textObj[index] = value
+    	end,
+    	__index = function(self, index)
+        if index == "Remove" or index == "Destroy" then
+        	return function()
+            textLabel:Destroy()
+            textObj.Remove(self)
+            return textObj:Remove()
+        	end
+        elseif index == "TextBounds" then
+        	return textLabel.TextBounds
+        end
+        return textObj[index]
+    	end,
+    	__tostring = function() return "Drawing" end
+    })
 	elseif drawingType == "Circle" then
-		local circleObj = ({
-			Radius = 150,
-			Position = Vector2.zero,
-			Thickness = .7,
-			Filled = false
-		} + baseDrawingObj)
-		local circleFrame, uiCorner, uiStroke = Instance.new("Frame"), Instance.new("UICorner"), Instance.new("UIStroke")
-		circleFrame.Name = drawingIndex
-		circleFrame.AnchorPoint = (Vector2.one * .5)
-		circleFrame.BorderSizePixel = 0
-		circleFrame.BackgroundTransparency = (if circleObj.Filled then convertTransparency(circleObj.Transparency) else 1)
-		circleFrame.BackgroundColor3 = circleObj.Color
-		circleFrame.Visible = circleObj.Visible
-		circleFrame.ZIndex = circleObj.ZIndex
-		uiCorner.CornerRadius = UDim.new(1, 0)
-		circleFrame.Size = UDim2.fromOffset(circleObj.Radius, circleObj.Radius)
-		uiStroke.Thickness = circleObj.Thickness
-		uiStroke.Enabled = not circleObj.Filled
-		uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-		circleFrame.Parent, uiCorner.Parent, uiStroke.Parent = drawingUI, circleFrame, circleFrame
-		return setmetatable(table.create(0), {
-			__newindex = function(_, index, value)
-				if typeof(circleObj[index]) == "nil" then return end
-				if index == "Radius" then
-					local radius = value * 2
-					circleFrame.Size = UDim2.fromOffset(radius, radius)
-				elseif index == "Position" then
-					circleFrame.Position = UDim2.fromOffset(value.X, value.Y)
-				elseif index == "Thickness" then
-					value = math.clamp(value, .6, 0x7fffffff)
-					uiStroke.Thickness = value
-				elseif index == "Filled" then
-					circleFrame.BackgroundTransparency = (if value then convertTransparency(circleObj.Transparency) else 1)
-					uiStroke.Enabled = not value
-				elseif index == "Visible" then
-					circleFrame.Visible = value
-				elseif index == "ZIndex" then
-					circleFrame.ZIndex = value
-				elseif index == "Transparency" then
-					local transparency = convertTransparency(value)
-					circleFrame.BackgroundTransparency = (if circleObj.Filled then transparency else 1)
-					uiStroke.Transparency = transparency
-				elseif index == "Color" then
-					circleFrame.BackgroundColor3 = value
-					uiStroke.Color = value
-				end
-				circleObj[index] = value
-			end,
-			__index = function(self, index)
-				if index == "Remove" or index == "Destroy" then
-					return function()
-						circleFrame:Destroy()
-						circleObj.Remove(self)
-						return circleObj:Remove()
-					end
-				end
-				return circleObj[index]
-			end,
-			__tostring = function() return "Drawing" end
-		})
+    local circleObj = ({
+    	Radius = 150,
+    	Position = Vector2.zero,
+    	Thickness = .7,
+    	Filled = false
+    } + baseDrawingObj)
+    local circleFrame, uiCorner, uiStroke = Instance.new("Frame"), Instance.new("UICorner"), Instance.new("UIStroke")
+    circleFrame.Name = drawingIndex
+    circleFrame.AnchorPoint = (Vector2.one * .5)
+    circleFrame.BorderSizePixel = 0
+    circleFrame.BackgroundTransparency = (if circleObj.Filled then convertTransparency(circleObj.Transparency) else 1)
+    circleFrame.BackgroundColor3 = circleObj.Color
+    circleFrame.Visible = circleObj.Visible
+    circleFrame.ZIndex = circleObj.ZIndex
+    uiCorner.CornerRadius = UDim.new(1, 0)
+    circleFrame.Size = UDim2.fromOffset(circleObj.Radius, circleObj.Radius)
+    uiStroke.Thickness = circleObj.Thickness
+    uiStroke.Enabled = not circleObj.Filled
+    uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    circleFrame.Parent, uiCorner.Parent, uiStroke.Parent = drawingUI, circleFrame, circleFrame
+    return setmetatable(table.create(0), {
+    	__newindex = function(_, index, value)
+        if typeof(circleObj[index]) == "nil" then return end
+        if index == "Radius" then
+        	local radius = value * 2
+        	circleFrame.Size = UDim2.fromOffset(radius, radius)
+        elseif index == "Position" then
+        	circleFrame.Position = UDim2.fromOffset(value.X, value.Y)
+        elseif index == "Thickness" then
+        	value = math.clamp(value, .6, 0x7fffffff)
+        	uiStroke.Thickness = value
+        elseif index == "Filled" then
+        	circleFrame.BackgroundTransparency = (if value then convertTransparency(circleObj.Transparency) else 1)
+        	uiStroke.Enabled = not value
+        elseif index == "Visible" then
+        	circleFrame.Visible = value
+        elseif index == "ZIndex" then
+        	circleFrame.ZIndex = value
+        elseif index == "Transparency" then
+        	local transparency = convertTransparency(value)
+        	circleFrame.BackgroundTransparency = (if circleObj.Filled then transparency else 1)
+        	uiStroke.Transparency = transparency
+        elseif index == "Color" then
+        	circleFrame.BackgroundColor3 = value
+        	uiStroke.Color = value
+        end
+        circleObj[index] = value
+    	end,
+    	__index = function(self, index)
+        if index == "Remove" or index == "Destroy" then
+        	return function()
+            circleFrame:Destroy()
+            circleObj.Remove(self)
+            return circleObj:Remove()
+        	end
+        end
+        return circleObj[index]
+    	end,
+    	__tostring = function() return "Drawing" end
+    })
 	elseif drawingType == "Square" then
-		local squareObj = ({
-			Size = Vector2.zero,
-			Position = Vector2.zero,
-			Thickness = .7,
-			Filled = false
-		} + baseDrawingObj)
-		local squareFrame, uiStroke = Instance.new("Frame"), Instance.new("UIStroke")
-		squareFrame.Name = drawingIndex
-		squareFrame.BorderSizePixel = 0
-		squareFrame.BackgroundTransparency = (if squareObj.Filled then convertTransparency(squareObj.Transparency) else 1)
-		squareFrame.ZIndex = squareObj.ZIndex
-		squareFrame.BackgroundColor3 = squareObj.Color
-		squareFrame.Visible = squareObj.Visible
-		uiStroke.Thickness = squareObj.Thickness
-		uiStroke.Enabled = not squareObj.Filled
-		uiStroke.LineJoinMode = Enum.LineJoinMode.Miter
-		squareFrame.Parent, uiStroke.Parent = drawingUI, squareFrame
-		return setmetatable(table.create(0), {
-			__newindex = function(_, index, value)
-				if typeof(squareObj[index]) == "nil" then return end
-				if index == "Size" then
-					squareFrame.Size = UDim2.fromOffset(value.X, value.Y)
-				elseif index == "Position" then
-					squareFrame.Position = UDim2.fromOffset(value.X, value.Y)
-				elseif index == "Thickness" then
-					value = math.clamp(value, 0.6, 0x7fffffff)
-					uiStroke.Thickness = value
-				elseif index == "Filled" then
-					squareFrame.BackgroundTransparency = (if value then convertTransparency(squareObj.Transparency) else 1)
-					uiStroke.Enabled = not value
-				elseif index == "Visible" then
-					squareFrame.Visible = value
-				elseif index == "ZIndex" then
-					squareFrame.ZIndex = value
-				elseif index == "Transparency" then
-					local transparency = convertTransparency(value)
-					squareFrame.BackgroundTransparency = (if squareObj.Filled then transparency else 1)
-					uiStroke.Transparency = transparency
-				elseif index == "Color" then
-					uiStroke.Color = value
-					squareFrame.BackgroundColor3 = value
-				end
-				squareObj[index] = value
-			end,
-			__index = function(self, index)
-				if index == "Remove" or index == "Destroy" then
-					return function()
-						squareFrame:Destroy()
-						squareObj.Remove(self)
-						return squareObj:Remove()
-					end
-				end
-				return squareObj[index]
-			end,
-			__tostring = function() return "Drawing" end
-		})
+    local squareObj = ({
+    	Size = Vector2.zero,
+    	Position = Vector2.zero,
+    	Thickness = .7,
+    	Filled = false
+    } + baseDrawingObj)
+    local squareFrame, uiStroke = Instance.new("Frame"), Instance.new("UIStroke")
+    squareFrame.Name = drawingIndex
+    squareFrame.BorderSizePixel = 0
+    squareFrame.BackgroundTransparency = (if squareObj.Filled then convertTransparency(squareObj.Transparency) else 1)
+    squareFrame.ZIndex = squareObj.ZIndex
+    squareFrame.BackgroundColor3 = squareObj.Color
+    squareFrame.Visible = squareObj.Visible
+    uiStroke.Thickness = squareObj.Thickness
+    uiStroke.Enabled = not squareObj.Filled
+    uiStroke.LineJoinMode = Enum.LineJoinMode.Miter
+    squareFrame.Parent, uiStroke.Parent = drawingUI, squareFrame
+    return setmetatable(table.create(0), {
+    	__newindex = function(_, index, value)
+        if typeof(squareObj[index]) == "nil" then return end
+        if index == "Size" then
+        	squareFrame.Size = UDim2.fromOffset(value.X, value.Y)
+        elseif index == "Position" then
+        	squareFrame.Position = UDim2.fromOffset(value.X, value.Y)
+        elseif index == "Thickness" then
+        	value = math.clamp(value, 0.6, 0x7fffffff)
+        	uiStroke.Thickness = value
+        elseif index == "Filled" then
+        	squareFrame.BackgroundTransparency = (if value then convertTransparency(squareObj.Transparency) else 1)
+        	uiStroke.Enabled = not value
+        elseif index == "Visible" then
+        	squareFrame.Visible = value
+        elseif index == "ZIndex" then
+        	squareFrame.ZIndex = value
+        elseif index == "Transparency" then
+        	local transparency = convertTransparency(value)
+        	squareFrame.BackgroundTransparency = (if squareObj.Filled then transparency else 1)
+        	uiStroke.Transparency = transparency
+        elseif index == "Color" then
+        	uiStroke.Color = value
+        	squareFrame.BackgroundColor3 = value
+        end
+        squareObj[index] = value
+    	end,
+    	__index = function(self, index)
+        if index == "Remove" or index == "Destroy" then
+        	return function()
+            squareFrame:Destroy()
+            squareObj.Remove(self)
+            return squareObj:Remove()
+        	end
+        end
+        return squareObj[index]
+    	end,
+    	__tostring = function() return "Drawing" end
+    })
 	elseif drawingType == "Image" then
-		local imageObj = ({
-			Data = "",
-			DataURL = "rbxassetid://0",
-			Size = Vector2.zero,
-			Position = Vector2.zero
-		} + baseDrawingObj)
-		local imageFrame = Instance.new("ImageLabel")
-		imageFrame.Name = drawingIndex
-		imageFrame.BorderSizePixel = 0
-		imageFrame.ScaleType = Enum.ScaleType.Stretch
-		imageFrame.BackgroundTransparency = 1
-		imageFrame.Visible = imageObj.Visible
-		imageFrame.ZIndex = imageObj.ZIndex
-		imageFrame.ImageTransparency = convertTransparency(imageObj.Transparency)
-		imageFrame.ImageColor3 = imageObj.Color
-		imageFrame.Parent = drawingUI
-		return setmetatable(table.create(0), {
-			__newindex = function(_, index, value)
-				if typeof(imageObj[index]) == "nil" then return end
-				if index == "Data" then
-					-- later
-				elseif index == "DataURL" then -- temporary property
-					imageFrame.Image = value
-				elseif index == "Size" then
-					imageFrame.Size = UDim2.fromOffset(value.X, value.Y)
-				elseif index == "Position" then
-					imageFrame.Position = UDim2.fromOffset(value.X, value.Y)
-				elseif index == "Visible" then
-					imageFrame.Visible = value
-				elseif index == "ZIndex" then
-					imageFrame.ZIndex = value
-				elseif index == "Transparency" then
-					imageFrame.ImageTransparency = convertTransparency(value)
-				elseif index == "Color" then
-					imageFrame.ImageColor3 = value
-				end
-				imageObj[index] = value
-			end,
-			__index = function(self, index)
-				if index == "Remove" or index == "Destroy" then
-					return function()
-						imageFrame:Destroy()
-						imageObj.Remove(self)
-						return imageObj:Remove()
-					end
-				elseif index == "Data" then
-					return nil -- TODO: add error here
-				end
-				return imageObj[index]
-			end,
-			__tostring = function() return "Drawing" end
-		})
+    local imageObj = ({
+    	Data = "",
+    	DataURL = "rbxassetid://0",
+    	Size = Vector2.zero,
+    	Position = Vector2.zero
+    } + baseDrawingObj)
+    local imageFrame = Instance.new("ImageLabel")
+    imageFrame.Name = drawingIndex
+    imageFrame.BorderSizePixel = 0
+    imageFrame.ScaleType = Enum.ScaleType.Stretch
+    imageFrame.BackgroundTransparency = 1
+    imageFrame.Visible = imageObj.Visible
+    imageFrame.ZIndex = imageObj.ZIndex
+    imageFrame.ImageTransparency = convertTransparency(imageObj.Transparency)
+    imageFrame.ImageColor3 = imageObj.Color
+    imageFrame.Parent = drawingUI
+    return setmetatable(table.create(0), {
+    	__newindex = function(_, index, value)
+        if typeof(imageObj[index]) == "nil" then return end
+        if index == "Data" then
+        	-- later
+        elseif index == "DataURL" then -- temporary property
+        	imageFrame.Image = value
+        elseif index == "Size" then
+        	imageFrame.Size = UDim2.fromOffset(value.X, value.Y)
+        elseif index == "Position" then
+        	imageFrame.Position = UDim2.fromOffset(value.X, value.Y)
+        elseif index == "Visible" then
+        	imageFrame.Visible = value
+        elseif index == "ZIndex" then
+        	imageFrame.ZIndex = value
+        elseif index == "Transparency" then
+        	imageFrame.ImageTransparency = convertTransparency(value)
+        elseif index == "Color" then
+        	imageFrame.ImageColor3 = value
+        end
+        imageObj[index] = value
+    	end,
+    	__index = function(self, index)
+        if index == "Remove" or index == "Destroy" then
+        	return function()
+            imageFrame:Destroy()
+            imageObj.Remove(self)
+            return imageObj:Remove()
+        	end
+        elseif index == "Data" then
+        	return nil -- TODO: add error here
+        end
+        return imageObj[index]
+    	end,
+    	__tostring = function() return "Drawing" end
+    })
 	elseif drawingType == "Quad" then
-		local QuadProperties = ({
-			Thickness = 1,
-			PointA = Vector2.new();
-			PointB = Vector2.new();
-			PointC = Vector2.new();
-			PointD = Vector2.new();
-			Filled = false;
-		}  + baseDrawingObj);
-		local PointA = getgenv().Drawing.new("Line")
-		local PointB = getgenv().Drawing.new("Line")
-		local PointC = getgenv().Drawing.new("Line")
-		local PointD = getgenv().Drawing.new("Line")
-		return setmetatable({}, {
-			__newindex = (function(self, Property, Value)
-				if Property == "Thickness" then
-					PointA.Thickness = Value
-					PointB.Thickness = Value
-					PointC.Thickness = Value
-					PointD.Thickness = Value
-				end
-				if Property == "PointA" then
-					PointA.From = Value
-					PointB.To = Value
-				end
-				if Property == "PointB" then
-					PointB.From = Value
-					PointC.To = Value
-				end
-				if Property == "PointC" then
-					PointC.From = Value
-					PointD.To = Value
-				end
-				if Property == "PointD" then
-					PointD.From = Value
-					PointA.To = Value
-				end
-				if Property == "Visible" then 
-					PointA.Visible = true
-					PointB.Visible = true
-					PointC.Visible = true
-					PointD.Visible = true    
-				end
-				if Property == "Filled" then
-					-- i'll do this later
-				end
-				if Property == "Color" then
-					PointA.Color = Value
-					PointB.Color = Value
-					PointC.Color = Value
-					PointD.Color = Value
-				end
-				if (Property == "ZIndex") then
-					PointA.ZIndex = Value
-					PointB.ZIndex = Value
-					PointC.ZIndex = Value
-					PointD.ZIndex = Value
-				end
-			end),
-			__index = (function(self, Property)
-				if (string.lower(tostring(Property)) == "remove") then
-					return (function()
-						PointA:Remove();
-						PointB:Remove();
-						PointC:Remove();
-						PointD:Remove();
-					end)
-				end
-				return QuadProperties[Property]
-			end)
-		});
+    local QuadProperties = ({
+    	Thickness = 1,
+    	PointA = Vector2.new();
+    	PointB = Vector2.new();
+    	PointC = Vector2.new();
+    	PointD = Vector2.new();
+    	Filled = false;
+    }  + baseDrawingObj);
+    local PointA = getgenv().Drawing.new("Line")
+    local PointB = getgenv().Drawing.new("Line")
+    local PointC = getgenv().Drawing.new("Line")
+    local PointD = getgenv().Drawing.new("Line")
+    return setmetatable({}, {
+    	__newindex = (function(self, Property, Value)
+        if Property == "Thickness" then
+        	PointA.Thickness = Value
+        	PointB.Thickness = Value
+        	PointC.Thickness = Value
+        	PointD.Thickness = Value
+        end
+        if Property == "PointA" then
+        	PointA.From = Value
+        	PointB.To = Value
+        end
+        if Property == "PointB" then
+        	PointB.From = Value
+        	PointC.To = Value
+        end
+        if Property == "PointC" then
+        	PointC.From = Value
+        	PointD.To = Value
+        end
+        if Property == "PointD" then
+        	PointD.From = Value
+        	PointA.To = Value
+        end
+        if Property == "Visible" then 
+        	PointA.Visible = true
+        	PointB.Visible = true
+        	PointC.Visible = true
+        	PointD.Visible = true    
+        end
+        if Property == "Filled" then
+        	-- i'll do this later
+        end
+        if Property == "Color" then
+        	PointA.Color = Value
+        	PointB.Color = Value
+        	PointC.Color = Value
+        	PointD.Color = Value
+        end
+        if (Property == "ZIndex") then
+        	PointA.ZIndex = Value
+        	PointB.ZIndex = Value
+        	PointC.ZIndex = Value
+        	PointD.ZIndex = Value
+        end
+    	end),
+    	__index = (function(self, Property)
+        if (string.lower(tostring(Property)) == "remove") then
+        	return (function()
+            PointA:Remove();
+            PointB:Remove();
+            PointC:Remove();
+            PointD:Remove();
+        	end)
+        end
+        return QuadProperties[Property]
+    	end)
+    });
 	elseif drawingType == "Triangle" then
-		local triangleObj = ({
-			PointA = Vector2.zero,
-			PointB = Vector2.zero,
-			PointC = Vector2.zero,
-			Thickness = 1,
-			Filled = false
-		} + baseDrawingObj)
-		local _linePoints = table.create(0)
-		_linePoints.A = getgenv().Drawing.new("Line")
-		_linePoints.B = getgenv().Drawing.new("Line")
-		_linePoints.C = getgenv().Drawing.new("Line")
-		return setmetatable(table.create(0), {
-			__tostring = function() return "Drawing" end,
-			__newindex = function(_, index, value)
-				if typeof(triangleObj[index]) == "nil" then return end
-				if index == "PointA" then
-					_linePoints.A.From = value
-					_linePoints.B.To = value
-				elseif index == "PointB" then
-					_linePoints.B.From = value
-					_linePoints.C.To = value
-				elseif index == "PointC" then
-					_linePoints.C.From = value
-					_linePoints.A.To = value
-				elseif (index == "Thickness" or index == "Visible" or index == "Color" or index == "ZIndex") then
-					for _, linePoint in _linePoints do
-						linePoint[index] = value
-					end
-				elseif index == "Filled" then
-					-- later
-				end
-				triangleObj[index] = value
-			end,
-			__index = function(self, index)
-				if index == "Remove" or index == "Destroy" then
-					return function()
-						for _, linePoint in _linePoints do
-							linePoint:Remove()
-						end
-						triangleObj.Remove(self)
-						return triangleObj:Remove()
-					end
-				end
-				return triangleObj[index]
-			end,
-		})
+    local triangleObj = ({
+    	PointA = Vector2.zero,
+    	PointB = Vector2.zero,
+    	PointC = Vector2.zero,
+    	Thickness = 1,
+    	Filled = false
+    } + baseDrawingObj)
+    local _linePoints = table.create(0)
+    _linePoints.A = getgenv().Drawing.new("Line")
+    _linePoints.B = getgenv().Drawing.new("Line")
+    _linePoints.C = getgenv().Drawing.new("Line")
+    return setmetatable(table.create(0), {
+    	__tostring = function() return "Drawing" end,
+    	__newindex = function(_, index, value)
+        if typeof(triangleObj[index]) == "nil" then return end
+        if index == "PointA" then
+        	_linePoints.A.From = value
+        	_linePoints.B.To = value
+        elseif index == "PointB" then
+        	_linePoints.B.From = value
+        	_linePoints.C.To = value
+        elseif index == "PointC" then
+        	_linePoints.C.From = value
+        	_linePoints.A.To = value
+        elseif (index == "Thickness" or index == "Visible" or index == "Color" or index == "ZIndex") then
+        	for _, linePoint in _linePoints do
+            linePoint[index] = value
+        	end
+        elseif index == "Filled" then
+        	-- later
+        end
+        triangleObj[index] = value
+    	end,
+    	__index = function(self, index)
+        if index == "Remove" or index == "Destroy" then
+        	return function()
+            for _, linePoint in _linePoints do
+            	linePoint:Remove()
+            end
+            triangleObj.Remove(self)
+            return triangleObj:Remove()
+        	end
+        end
+        return triangleObj[index]
+    	end,
+    })
 	end
 end
 getgenv().isrenderobj = function(obj)
@@ -1348,14 +1488,14 @@ local function sendRequest(options, timeout)
 	local result, clock = nil, tick()
 
 	HttpService:RequestInternal(options):Start(function(success, body)
-		result = body
-		result['Success'] = success
+    result = body
+    result['Success'] = success
 	end)
 
 	while not result do task.wait()
-		if (tick() - clock > timeout) then
-			break
-		end
+    if (tick() - clock > timeout) then
+    	break
+    end
 	end
 
 	return result
@@ -1364,49 +1504,49 @@ end
 function Bridge:InternalRequest(body, timeout)
 	local url = self.serverUrl .. '/send'
 	if body.Url then
-		url = body.Url
-		body["Url"] = nil
-		local options = {
-			Url = url,
-			Body = body['ct'],
-			Method = 'POST',
-			Headers = {
-				['Content-Type'] = 'text/plain'
-			}
-		}
-		local result = sendRequest(options, timeout)
-		local statusCode = tonumber(result.StatusCode)
-		if statusCode and statusCode >= 200 and statusCode < 300 then
-			return result.Body or true
-		end
+    url = body.Url
+    body["Url"] = nil
+    local options = {
+    	Url = url,
+    	Body = body['ct'],
+    	Method = 'POST',
+    	Headers = {
+        ['Content-Type'] = 'text/plain'
+    	}
+    }
+    local result = sendRequest(options, timeout)
+    local statusCode = tonumber(result.StatusCode)
+    if statusCode and statusCode >= 200 and statusCode < 300 then
+    	return result.Body or true
+    end
 
-		local success, result = pcall(function()
-			local decoded = HttpService:JSONDecode(result.Body)
-			if decoded and type(decoded) == "table" then
-				return decoded.error
-			end
-		end)
+    local success, result = pcall(function()
+    	local decoded = HttpService:JSONDecode(result.Body)
+    	if decoded and type(decoded) == "table" then
+        return decoded.error
+    	end
+    end)
 
-		if success and result then
-			error(result, 2)
-			return
-		end
+    if success and result then
+    	error(result, 2)
+    	return
+    end
 
-		error("[Stellar Error]: Unknown error", 2)
-		return
+    error("[Stellar Error]: Unknown error", 2)
+    return
 	end
 
 	local success = pcall(function()
-		body = HttpService:JSONEncode(body)
+    body = HttpService:JSONEncode(body)
 	end) if not success then return end
 
 	local options = {
-		Url = url,
-		Body = body,
-		Method = 'POST',
-		Headers = {
-			['Content-Type'] = 'application/json'
-		}
+    Url = url,
+    Body = body,
+    Method = 'POST',
+    Headers = {
+    	['Content-Type'] = 'application/json'
+    }
 	}
 
 	local result = sendRequest(options, timeout)
@@ -1415,18 +1555,18 @@ function Bridge:InternalRequest(body, timeout)
 
 	local statusCode = tonumber(result.StatusCode)
 	if statusCode and statusCode >= 200 and statusCode < 300 then
-		return result.Body or true
+    return result.Body or true
 	end
 
 	local success, result = pcall(function()
-		local decoded = HttpService:JSONDecode(result.Body)
-		if decoded and type(decoded) == "table" then
-			return decoded.error
-		end
+    local decoded = HttpService:JSONDecode(result.Body)
+    if decoded and type(decoded) == "table" then
+    	return decoded.error
+    end
 	end)
 
 	if success and result then
-		error("[Stellar Error]: " .. tostring(result), 2)
+    error("[Stellar Error]: " .. tostring(result), 2)
 	end
 
 	error("[Stellar Error]: Unknown server error", 2)
@@ -1434,119 +1574,119 @@ end
 
 function Bridge:request(options)
 	local result = self:InternalRequest({
-		['c'] = "rq",
-		['l'] = options.Url,
-		['m'] = options.Method,
-		['h'] = options.Headers,
-		['b'] = options.Body or "{}"
+    ['c'] = "rq",
+    ['l'] = options.Url,
+    ['m'] = options.Method,
+    ['h'] = options.Headers,
+    ['b'] = options.Body or "{}"
 	})
 	if result then
-		result = HttpService:JSONDecode(result)
-		if result['r'] ~= "OK" then
-			result['r'] = "Unknown"
-		end
-		if result['b64'] then
-			result['b'] = base64.decode(result['b'])
-		end
-		return {
-			Success = tonumber(result['c']) and tonumber(result['c']) > 200 and tonumber(result['c']) < 300,
-			StatusMessage = result['r'], -- OK
-			StatusCode = tonumber(result['c']), -- 200
-			Body = result['b'],
-			HttpError = Enum.HttpError[result['r']],
-			Headers = result['h'],
-			Version = result['v']
-		}
+    result = HttpService:JSONDecode(result)
+    if result['r'] ~= "OK" then
+    	result['r'] = "Unknown"
+    end
+    if result['b64'] then
+    	result['b'] = base64.decode(result['b'])
+    end
+    return {
+    	Success = tonumber(result['c']) and tonumber(result['c']) > 200 and tonumber(result['c']) < 300,
+    	StatusMessage = result['r'], -- OK
+    	StatusCode = tonumber(result['c']), -- 200
+    	Body = result['b'],
+    	HttpError = Enum.HttpError[result['r']],
+    	Headers = result['h'],
+    	Version = result['v']
+    }
 	end
 	return {
-		Success = false,
-		StatusMessage = "[Stellar Error]: webServer connection failed:  " .. self.serverUrl,
-		StatusCode = 599;
-		HttpError = Enum.HttpError.ConnectFail
+    Success = false,
+    StatusMessage = "[Stellar Error]: webServer connection failed:  " .. self.serverUrl,
+    StatusCode = 599;
+    HttpError = Enum.HttpError.ConnectFail
 	}
 end
 
 function Bridge:rconsole(_type, content)
 	if _type == "cls" or _type == "crt" or _type == "dst" then
-		local result = self:InternalRequest({
-			['c'] = "rc",
-			['t'] = _type
-		})
-		return result ~= nil
+    local result = self:InternalRequest({
+    	['c'] = "rc",
+    	['t'] = _type
+    })
+    return result ~= nil
 	end
 	local result = self:InternalRequest({
-		['c'] = "rc",
-		['t'] = _type,
-		['ct'] = base64.encode(content)
+    ['c'] = "rc",
+    ['t'] = _type,
+    ['ct'] = base64.encode(content)
 	})
 	return result ~= nil
 end
 
 if not shared.vulnsm then 
 	task.spawn(function()
-		local result = sendRequest({
-			Url = Bridge.serverUrl .. "/send",
-			Body = HttpService:JSONEncode({
-				['c'] = "hw"
-			}),
-			Method = "POST"
-		})
-		if result.Body then
-			hwid = result.Body:gsub("{", ""):gsub("}", "")
-		end
+    local result = sendRequest({
+    	Url = Bridge.serverUrl .. "/send",
+    	Body = HttpService:JSONEncode({
+        ['c'] = "hw"
+    	}),
+    	Method = "POST"
+    })
+    if result.Body then
+    	hwid = result.Body:gsub("{", ""):gsub("}", "")
+    end
 	end)
 	getgenv().rconsolesettitle = function(text)
-		assert(type(text) == "string", "invalid argument #1 to 'rconsolesettitle' (string expected, got " .. type(text) .. ") ", 2)
-		Bridge:rconsole("ttl", text)
+    assert(type(text) == "string", "invalid argument #1 to 'rconsolesettitle' (string expected, got " .. type(text) .. ") ", 2)
+    Bridge:rconsole("ttl", text)
 	end
 	getgenv().rconsoleclear = function()
-		Bridge:rconsole("cls") 
-		rconsolesettitle("Stellar is NOT fat!")
+    Bridge:rconsole("cls") 
+    rconsolesettitle("Stellar is NOT fat!")
 	end
 	
 	getgenv().rconsolecreate = function()
-		Bridge:rconsole("crt")
-		rconsolesettitle("Stellar is NOT fat!")
+    Bridge:rconsole("crt")
+    rconsolesettitle("Stellar is NOT fat!")
 	end
 	
 	getgenv().rconsoledestroy = function()
-		Bridge:rconsole("dst")
-		rconsolesettitle("Stellar is NOT fat!")
+    Bridge:rconsole("dst")
+    rconsolesettitle("Stellar is NOT fat!")
 	end
 	
 	getgenv().rconsoleprint = function(...)
-		local text = ""
-		for _, v in {...} do
-			text = text .. tostring(v) .. " "
-		end
-		Bridge:rconsole("prt", text)
-		rconsolesettitle("Stellar is NOT fat!")
+    local text = ""
+    for _, v in {...} do
+    	text = text .. tostring(v) .. " "
+    end
+    Bridge:rconsole("prt", text)
+    rconsolesettitle("Stellar is NOT fat!")
 	end
 	
 	getgenv().rconsoleinfo = function(...)
-		local text = ""
-		for _, v in {...} do
-			text = text .. tostring(v) .. " "
-		end
-		Bridge:rconsole("prt", "[ INFO ] " .. text)
-		rconsolesettitle("Stellar is NOT fat!")
+    local text = ""
+    for _, v in {...} do
+    	text = text .. tostring(v) .. " "
+    end
+    Bridge:rconsole("prt", "[ INFO ] " .. text)
+    rconsolesettitle("Stellar is NOT fat!")
 	end
 	
 	getgenv().rconsolewarn = function(...)
-		local text = ""
-		for _, v in {...} do
-			text = text .. tostring(v) .. " "
-		end
-		Bridge:rconsole("prt", "[ WARNING ] " .. text)
-		rconsolesettitle("Stellar is NOT fat!")
+    local text = ""
+    for _, v in {...} do
+    	text = text .. tostring(v) .. " "
+    end
+    Bridge:rconsole("prt", "[ WARNING ] " .. text)
+    rconsolesettitle("Stellar is NOT fat!")
 	end
 	getgenv().rconsoleinput = function(text)
-		Bridge:rconsole("prt", "[ ERROR ] Input doesnt work")
-		rconsolesettitle("Stellar is NOT fat!")
+    Bridge:rconsole("prt", "[ ERROR ] Input doesnt work")
+    rconsolesettitle("Stellar is NOT fat!")
 	end
 	getgenv().rconsoleerr = function(text)
-		Bridge:rconsole("prt", "[ ERROR ] " .. text)
-		rconsolesettitle("Stellar is NOT fat!")
+    Bridge:rconsole("prt", "[ ERROR ] " .. text)
+    rconsolesettitle("Stellar is NOT fat!")
 	end 
 	getgenv().rconsoleerror = getgenv().rconsoleerr 
 	getgenv().rconsolename = getgenv().rconsolesettitle
@@ -1767,7 +1907,7 @@ getgenv().setreadonly = function(taable, boolean)
     if boolean then
         table.freeze(taable)
     else
-		disableprotections(taable)
+    disableprotections(taable)
     end
 end
 
@@ -1830,147 +1970,147 @@ getgenv().string = string
 if not shared.vulnsm then 
 	local wrappercache = setmetatable({}, {__mode = "k"})
 	local vulnInstanceTbl = {
-		"HttpRbxApiService",
-		"MarketplaceService",
-		"HttpService",
-		"OpenCloudService",
-		"BrowserService",
-		"LinkingService",
-		"MessageBusService",
-		"OmniRecommendationsService",
-		"Script Context",
-		"ScriptContext",
-		"game",
-		"Game"
+    "HttpRbxApiService",
+    "MarketplaceService",
+    "HttpService",
+    "OpenCloudService",
+    "BrowserService",
+    "LinkingService",
+    "MessageBusService",
+    "OmniRecommendationsService",
+    "Script Context",
+    "ScriptContext",
+    "game",
+    "Game"
 	}
 	local vulnFuncTbl = {
-		"PostAsync",
-		"PostAsyncFullUrl",
-		"PerformPurchaseV2",
-		"PromptBundlePurchase",
-		"PromptGamePassPurchase",
-		"PromptProductPurchase",
-		"PromptPurchase",
-		"PromptRobloxPurchase",
-		"PromptThirdPartyPurchase",
-		"OpenBrowserWindow",
-		"OpenNativeOverlay",
-		"AddCoreScriptLocal",
-		"EmitHybridEvent",
-		"ExecuteJavaScript",
-		"ReturnToJavaScript",
-		"SendCommand",
-		"Call",
-		"OpenUrl",
-		"SaveScriptProfilingData",
-		"GetLast",
-		"GetMessageId", 
-		"GetProtocolMethodRequestMessageId",
-		"GetProtocolMethodResponseMessageId",
-		"MakeRequest",
-		"Publish",
-		"PublishProtocolMethodRequest",
-		"PublishProtocolMethodResponse",
-		"Subscribe",
-		"SubscribeToProtocolMethodRequest",
-		"SubscribeToProtocolMethodResponse",
-		"GetRobuxBalance",
-		"GetAsyncFullUrl",
-		"PromptNativePurchaseWithLocalPlayer",
-		"PromptNativePurchase",
-		"PromptCollectiblesPurchase",
-		"GetAsync",
-		"RequestInternal",
-		"HttpRequestAsync",
-		"RequestAsync",
-		"OpenScreenshotsFolder",
-		"Load"
+    "PostAsync",
+    "PostAsyncFullUrl",
+    "PerformPurchaseV2",
+    "PromptBundlePurchase",
+    "PromptGamePassPurchase",
+    "PromptProductPurchase",
+    "PromptPurchase",
+    "PromptRobloxPurchase",
+    "PromptThirdPartyPurchase",
+    "OpenBrowserWindow",
+    "OpenNativeOverlay",
+    "AddCoreScriptLocal",
+    "EmitHybridEvent",
+    "ExecuteJavaScript",
+    "ReturnToJavaScript",
+    "SendCommand",
+    "Call",
+    "OpenUrl",
+    "SaveScriptProfilingData",
+    "GetLast",
+    "GetMessageId", 
+    "GetProtocolMethodRequestMessageId",
+    "GetProtocolMethodResponseMessageId",
+    "MakeRequest",
+    "Publish",
+    "PublishProtocolMethodRequest",
+    "PublishProtocolMethodResponse",
+    "Subscribe",
+    "SubscribeToProtocolMethodRequest",
+    "SubscribeToProtocolMethodResponse",
+    "GetRobuxBalance",
+    "GetAsyncFullUrl",
+    "PromptNativePurchaseWithLocalPlayer",
+    "PromptNativePurchase",
+    "PromptCollectiblesPurchase",
+    "GetAsync",
+    "RequestInternal",
+    "HttpRequestAsync",
+    "RequestAsync",
+    "OpenScreenshotsFolder",
+    "Load"
 	}
 	wrap = function(real)
-		for w,r in next,wrappercache do
-			if r == real then
-				return w
-			end
-		end
+    for w,r in next,wrappercache do
+    	if r == real then
+        return w
+    	end
+    end
 	
-		if type(real) == "userdata" then
-			local fake = newproxy(true)
-			local meta = getmetatable(fake)
-			
-			meta.__index = function(s,k)
-				if table.find(vulnFuncTbl, k) then 
-					return function()
-						error("[Stellar]: "..tostring(k).." isn't available.")
-					end
-				elseif k == "GetObjects" or k == "LoadLocalAsset" or k == "LoadAsset" then
-					return function(self, id)
-						local ret = {[1] = game:FindFirstChildOfClass("InsertService"):LoadLocalAsset(id)}
-						return ret
-					end
-				elseif k == "HttpGet" or k == "HttpGetAsync" then
-					return function(self, url)
-						assert(type(url) == "string", "invalid argument #1 to 'HttpGet' (string expected, got " .. type(url) .. ") ", 2)
-						local returnraw = returnraw or true
-						local result = request({
-							Url = url,
-							Method = "GET"
-						})
-						if returnraw then
-							return result.Body
-						end
-						return game:GetService("HttpService"):JSONDecode(result.Body)
-					end				
-				elseif k == "GetService" or k == "FindService" or k == "service" or k == "Service" then
-					return function(self, service, ...)
-						if table.find(vulnInstanceTbl, service) then
-							return wrap(real[k](real, service))
-						end
-						return real[k](real, service)
-					end
-				end
+    if type(real) == "userdata" then
+    	local fake = newproxy(true)
+    	local meta = getmetatable(fake)
+    	
+    	meta.__index = function(s,k)
+        if table.find(vulnFuncTbl, k) then 
+        	return function()
+            error("[Stellar]: "..tostring(k).." isn't available.")
+        	end
+        elseif k == "GetObjects" or k == "LoadLocalAsset" or k == "LoadAsset" then
+        	return function(self, id)
+            local ret = {[1] = game:FindFirstChildOfClass("InsertService"):LoadLocalAsset(id)}
+            return ret
+        	end
+        elseif k == "HttpGet" or k == "HttpGetAsync" then
+        	return function(self, url)
+            assert(type(url) == "string", "invalid argument #1 to 'HttpGet' (string expected, got " .. type(url) .. ") ", 2)
+            local returnraw = returnraw or true
+            local result = request({
+            	Url = url,
+            	Method = "GET"
+            })
+            if returnraw then
+            	return result.Body
+            end
+            return game:GetService("HttpService"):JSONDecode(result.Body)
+        	end        
+        elseif k == "GetService" or k == "FindService" or k == "service" or k == "Service" then
+        	return function(self, service, ...)
+            if table.find(vulnInstanceTbl, service) then
+            	return wrap(real[k](real, service))
+            end
+            return real[k](real, service)
+        	end
+        end
 	
-				if table.find(vulnInstanceTbl, tostring(real[k])) or table.find(vulnInstanceTbl, k) or table.find(vulnInstanceTbl, tostring(real)) then 
-					return wrap(real[k])
-				end
+        if table.find(vulnInstanceTbl, tostring(real[k])) or table.find(vulnInstanceTbl, k) or table.find(vulnInstanceTbl, tostring(real)) then 
+        	return wrap(real[k])
+        end
 	
-				return typeof(real[k]) == "Instance" and real[k] or wrap(real[k])
-			end
+        return typeof(real[k]) == "Instance" and real[k] or wrap(real[k])
+    	end
 	
-			meta.__newindex = function(s,k,v)
-				real[k] = v
-			end
+    	meta.__newindex = function(s,k,v)
+        real[k] = v
+    	end
 	
-			meta.__tostring = function(s)
-				return tostring(real)
-			end
+    	meta.__tostring = function(s)
+        return tostring(real)
+    	end
 	
-			wrappercache[fake] = real
+    	wrappercache[fake] = real
 	
-			if table.find(vulnInstanceTbl, tostring(real)) then 
-				return fake
-			end
+    	if table.find(vulnInstanceTbl, tostring(real)) then 
+        return fake
+    	end
 	
-			return (typeof(real) == "Instance" and real.ClassName ~= "DataModel") and real or fake
-		elseif type(real) == "function" then
-			local fake = function(...)
-				local args = unwrap{...}
-				local results = wrap{real(unpack(args))}
-				return unpack(results)
-			end
-			wrappercache[fake] = real
-			return fake
+    	return (typeof(real) == "Instance" and real.ClassName ~= "DataModel") and real or fake
+    elseif type(real) == "function" then
+    	local fake = function(...)
+        local args = unwrap{...}
+        local results = wrap{real(unpack(args))}
+        return unpack(results)
+    	end
+    	wrappercache[fake] = real
+    	return fake
 	
-		elseif type(real) == "table" then
-			local fake = {}
-			for k,v in next,real do
+    elseif type(real) == "table" then
+    	local fake = {}
+    	for k,v in next,real do
 	
-				fake[k] = (typeof(v) == "Instance" and v.ClassName ~= "DataModel") and v or wrap(v)
-			end
-			return fake
+        fake[k] = (typeof(v) == "Instance" and v.ClassName ~= "DataModel") and v or wrap(v)
+    	end
+    	return fake
 	
-		else
-			return real
-		end
+    else
+    	return real
+    end
 	end
 
     Xeno.WebSocket = {
@@ -1990,23 +2130,23 @@ if not shared.vulnsm then
 	local oncls = Instance.new("BindableEvent")
 	local conn = true
 	return {
-		Send = function(self, message)
-			if conn then
-				onmsg:Fire("Received message: " .. message)
-			else
-				error("WebSocket is closed")
-			end
-		end,
-		Close = function(self)
-			if conn then
-				conn = false
-				oncls:Fire()
-			else
-				error("WebSocket is already closed")
-			end
-		end,
-		OnMessage = onmsg.Event,
-		OnClose = oncls.Event
+    Send = function(self, message)
+    	if conn then
+        onmsg:Fire("Received message: " .. message)
+    	else
+        error("WebSocket is closed")
+    	end
+    end,
+    Close = function(self)
+    	if conn then
+        conn = false
+        oncls:Fire()
+    	else
+        error("WebSocket is already closed")
+    	end
+    end,
+    OnMessage = onmsg.Event,
+    OnClose = oncls.Event
 	}
 end
 
@@ -2014,28 +2154,28 @@ local WebSocket = getgenv().WebSocket
 WebSocket.connect = getgenv().WebSocket.connect
 	
 	unwrap = function(wrapped)
-		if type(wrapped) == "table" then
-			local real = {}
-			for k,v in next,wrapped do
-				real[k] = unwrap(v)
-			end
-			return real
-		else
-			local real = wrappercache[wrapped]
-			if real == nil then
-				return wrapped
-			end
-			return real
-		end
+    if type(wrapped) == "table" then
+    	local real = {}
+    	for k,v in next,wrapped do
+        real[k] = unwrap(v)
+    	end
+    	return real
+    else
+    	local real = wrappercache[wrapped]
+    	if real == nil then
+        return wrapped
+    	end
+    	return real
+    end
 	end
 	getgenv().game = wrap(game)
 	local oldlf = listfiles
 	getgenv().listfiles = function(path)
-		if path == "" or path == "C:\\" then 
-			error("no")
-		else 
-			return oldlf(path)
-		end 
+    if path == "" or path == "C:\\" then 
+    	error("no")
+    else 
+    	return oldlf(path)
+    end 
 	end
 	print("[Stellar]: Vulns mitigated.")
 	shared.vulnsm = true 
@@ -2043,9 +2183,9 @@ end
 getgenv().getscripts = function() 
 	local scripts = {}
 	for _, scriptt in game:GetDescendants() do
-		if scriptt:isA("LocalScript") or scriptt:isA("ModuleScript") then
-			table.insert(scripts, scriptt)
-		end
+    if scriptt:isA("LocalScript") or scriptt:isA("ModuleScript") then
+    	table.insert(scripts, scriptt)
+    end
 	end
 	return scripts
 end 
