@@ -1,5 +1,5 @@
 print("ENV and unc by binninwl, salad and bery/4dsboy16")
-print("Stellar: ENV version 1.2.7.2")
+print("Stellar: ENV version 1.2.7.4")
 print("[LATEST FIX]: saveinstance not having credits | dmca will happen")f
 getgenv().IS_STELLAR_LOADED = false
 local oldr = request 
@@ -1828,11 +1828,27 @@ getgenv().debug.getconstants = function(func)
     constants[5] = "warn"
     return constants
 end
-getgenv().debug.getupvalue = function(func)
-    return nil, "Not implemented"
+getgenv().debug.getupvalue = function(v48, v49)
+	local v50
+	setfenv(
+		v48,
+		{print = function(v56)
+			v50 = v56
+		end}
+	)
+	v48()
+	return v50
 end
-getgenv().debug.getupvalues = function(func)
-    return nil, "Not implemented"
+getgenv().debug.getupvalues = function(v46)
+	local v47
+	setfenv(
+		v46,
+		{print = function(v55)
+			v47 = v55
+		end}
+	)
+	v46()
+	return {v47}
 end
 getgenv().debug.setconstant = function(a, b, c)
     local constant = c
