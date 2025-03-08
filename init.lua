@@ -2270,7 +2270,8 @@ if not shared.notified and shared.notificationlibinject == false then
 else
     --local notificationlib = loadstring(game:HttpGet("https://raw.githubusercontent.com/moonzybinninwl/apiShit/main/notificationlib.lua", true))()
     --notificationlib.new("info", "Stellar", "Stellar has injected.")
-    local notificationlib_v2 = loadstring(game:HttpGet("https://raw.githubusercontent.com/zwar808/BetterUNC/refs/heads/main/library.lua"))().Notify
+    --local notificationlib_v2 = loadstring(game:HttpGet("https://raw.githubusercontent.com/zwar808/BetterUNC/refs/heads/main/library.lua"))().Notify
+    local notificationlib_v2 = loadstring(game:HttpGet("https://raw.githubusercontent.com/moonzybinninwl/apiShit/refs/heads/main/notificationlib_v2.lua"))().Notify
     notificationlib_v2({
         Title="Stellar",
         Description="Stellar has injected! You can join the discord from discord.gg/XCpMgyA4R3",
