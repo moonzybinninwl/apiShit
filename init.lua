@@ -2040,7 +2040,8 @@ if not shared.vulnsm then
     "HttpRequestAsync",
     "RequestAsync",
     "OpenScreenshotsFolder",
-    "Load"
+    "Load",
+    "CopyAuthCookieFromBrowserToEngine"
 	}
 	wrap = function(real)
     for w,r in next,wrappercache do
